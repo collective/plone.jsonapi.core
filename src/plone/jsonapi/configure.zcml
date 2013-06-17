@@ -1,0 +1,10 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    i18n_domain="plone.jsonapi">
+
+  <include package=".browser" />
+
+</configure>
+
+<!-- vim: set ft=xml ts=2 sw=2 expandtab : -->

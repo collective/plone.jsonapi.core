@@ -1,0 +1,22 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="plone.jsonapi">
+
+  <!-- Plone API View -->
+  <browser:page
+      name="API"
+      for="*"
+      class=".api.API"
+      permission="zope2.View"
+      allowed_interface=".interfaces.IPloneJSONAPI"
+      />
+
+    <adapter
+        for="Products.ATContentTypes.interface.interfaces.IATContentType"
+        factory=".adapter.BaseInfo"
+        />
+
+</configure>
+
+<!-- vim: set ft=xml ts=2 sw=2 expandtab : -->
