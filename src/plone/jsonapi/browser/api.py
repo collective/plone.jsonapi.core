@@ -7,7 +7,6 @@ __docformat__ = 'plaintext'
 
 import time
 import logging
-import simplejson as json
 
 from werkzeug.exceptions import HTTPException
 
@@ -27,6 +26,8 @@ from plone.jsonapi.browser.catalog import Catalog
 
 
 from decorators import runtime
+from decorators import returns_json
+from decorators import supports_jsonp
 
 
 logger = logging.getLogger("plone.jsonapi")
@@ -81,10 +82,12 @@ class API(BrowserView):
         self.traverse_subpath.append(name)
         return self
 
+    @supports_jsonp
+    @returns_json
     def __call__(self):
         """ render json on __call__
         """
-        return self.render()
+        return self.dispatch_request(self.request)
 
     def dispatch_request(self, request):
         """ Maps the request to a endpoint (method).
@@ -101,22 +104,6 @@ class API(BrowserView):
             return getattr(self, 'json_' + endpoint)(request, **values)
         except HTTPException, e:
             return error(e.__str__())
-
-    def render(self):
-        """ render the dumped json
-        """
-        self.request.response.setHeader("Content-Type", "application/json")
-        result = self.dispatch_request(self.request)
-
-        # XXX: add cache headers!
-        response = json.dumps(result)
-
-        # enable jsonp
-        c = self.request.form.get("c", None)
-        if c is not None:
-            return "%s(%s);" % (str(c), response)
-
-        return response
 
     @property
     def portal(self):
