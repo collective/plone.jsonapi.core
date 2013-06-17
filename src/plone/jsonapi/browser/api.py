@@ -56,7 +56,7 @@ class API(BrowserView):
     implements(IPloneJSONAPI, IPublishTraverse)
 
     ALLOWED_TYPES_TO_SEARCH = [
-        "Page", "File", "Image", "Topic", "Event", "News",
+        "Document", "File", "Image", "Collection", "Event", "News Item",
     ]
 
     ALLOWED_SORT_INDEX = [
@@ -68,6 +68,7 @@ class API(BrowserView):
         self.context = context
         self.request = request
         self.traverse_subpath = []
+
         self.router = Router(context, request)
         self.catalog = Catalog(context, request)
 

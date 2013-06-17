@@ -92,7 +92,9 @@ class Catalog(object):
                     items=results)
 
     def get_results(self, brains, with_object_info):
-        if brains is None: brains = []
+
+        if brains is None:
+            brains = []
 
         results = list()
         for brain in brains:

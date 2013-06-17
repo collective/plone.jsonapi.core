@@ -22,9 +22,11 @@ class URL(object):
                 "Page": "pages",
                 }
 
-        self.additional_urls = {
-                "orgas": ["reports", "events"],
-                }
+    @property
+    def portal(self):
+        portal_state = getMultiAdapter((self.context, self.request),
+                name=u'plone_portal_state')
+        return portal_state.portal()
 
     @property
     @memoize_contextless
@@ -44,12 +46,7 @@ class URL(object):
     def get_urls(self, brain):
         out = dict()
         api_url = self.get_api_url(brain)
-
         resource = self.get_api_resource(brain)
-
-        for url in self.additional_urls.get(resource, []):
-            out["api_url_" + url] = api_url + "/" + url
-
         out["api_url"] = api_url
 
         return out
