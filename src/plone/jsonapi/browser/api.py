@@ -26,6 +26,9 @@ from plone.jsonapi.browser.router import Router
 from plone.jsonapi.browser.catalog import Catalog
 
 
+from decorators import runtime
+
+
 logger = logging.getLogger("plone.jsonapi")
 
 __version__ = 0.1
@@ -103,13 +106,7 @@ class API(BrowserView):
         """ render the dumped json
         """
         self.request.response.setHeader("Content-Type", "application/json")
-
-        # execute method with time measure
-        start = time.time()
         result = self.dispatch_request(self.request)
-        end = time.time()
-
-        result.update(dict(_runtime=end - start))
 
         # XXX: add cache headers!
         response = json.dumps(result)
@@ -186,6 +183,10 @@ class API(BrowserView):
             qs += "*"
         return qs
 
+    ###########################################################################
+    # CUSTOM JSON METHODS
+    ###########################################################################
+    @runtime
     def json_contents(self, request, content=None):
         """ Return JSON for all content types
         """
@@ -203,6 +204,7 @@ class API(BrowserView):
         results = self.catalog.search(query)
         return success("success", **results)
 
+    @runtime
     def json_query(self, request):
         """ Query the Searchable Text Catalog only
         """
@@ -218,6 +220,7 @@ class API(BrowserView):
         results = self.catalog.search(query)
         return success("success", **results)
 
+    @runtime
     def json_version(self, request):
         """ return JSON API Version
         """
@@ -226,5 +229,6 @@ class API(BrowserView):
                         build=__build__,
                         date=__date__)
         return response
+
 
 # vim: set ft=python ts=4 sw=4 expandtab :
