@@ -5,76 +5,59 @@
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
-import time
 import logging
 
-from werkzeug.exceptions import HTTPException
-
-from DateTime import DateTime
-
 from zope.interface import implements
-from zope.component import getMultiAdapter
+from zope.component import getUtility
+from zope.component import getUtilitiesFor
 
 from Products.Five import BrowserView
-
 from zope.publisher.interfaces import IPublishTraverse
-
-
-from plone.jsonapi.browser.interfaces import IPloneJSONAPI
-from plone.jsonapi.browser.router import Router
-from plone.jsonapi.browser.catalog import Catalog
-
 
 from decorators import runtime
 from decorators import returns_json
-from decorators import supports_jsonp
+from decorators import handle_errors
 
+from interfaces import IAPI
+from interfaces import IRouter
+from interfaces import IRouteProvider
 
 logger = logging.getLogger("plone.jsonapi")
 
-__version__ = 0.1
-__build__ = 0
-__date__ = "2013-06-17"
-
-
-def error(message, **kw):
-    logger.error("API ERROR: %s, kw=%r" % (message, kw))
-    result = {"success": False, "error": message}
-    if kw:
-        result.update(kw)
-    return result
-
-
-def success(message, **kw):
-    result = {"success": True,
-            "message": message}
-    if kw:
-        result.update(kw)
-
-    return result
-
 
 class API(BrowserView):
-    """ Plone JSON API
+    """ JSON API Framework
     """
-    implements(IPloneJSONAPI, IPublishTraverse)
-
-    ALLOWED_TYPES_TO_SEARCH = [
-        "Document", "File", "Image", "Collection", "Event", "News Item",
-    ]
-
-    ALLOWED_SORT_INDEX = [
-        "id", "created", "modified", "sortable_title", "start", "end",
-        "getObjPositionInParent ", "expires", "Type",
-    ]
+    implements(IAPI, IPublishTraverse)
 
     def __init__(self, context, request):
         self.context = context
         self.request = request
-        self.traverse_subpath = []
 
-        self.router = Router(context, request)
-        self.catalog = Catalog(context, request)
+        self.traverse_subpath = []
+        self.router = getUtility(IRouter)
+        self.register()
+
+    def register(self):
+        """ queries all route prviders and initialize them
+        """
+
+        providers = getUtilitiesFor(IRouteProvider)
+        for name, instance in providers:
+
+            # 1. initialize the route provider with the context and request
+            if getattr(instance, "initialize", False):
+                instance.initialize(self.context, self.request)
+
+            routes = instance.routes
+            if callable(instance.routes):
+                routes = instance.routes()
+
+            # 2. add the provided routes to the router
+            for route in routes:
+                logger.info("Register new url rules! \
+                            url=%s, endpoint=%s, view_func=%r" % route)
+                self.router.add_url_rule(*route)
 
     def publishTraverse(self, request, name):
         """ get's called before __call__ for each path name
@@ -82,140 +65,18 @@ class API(BrowserView):
         self.traverse_subpath.append(name)
         return self
 
-    @supports_jsonp
+    @handle_errors
+    def dispatch(self):
+        """ dispatches the given subpath to the router
+        """
+        path = "/".join(self.traverse_subpath)
+        return self.router(path)
+
     @returns_json
+    @runtime
     def __call__(self):
         """ render json on __call__
         """
-        return self.dispatch_request(self.request)
-
-    def dispatch_request(self, request):
-        """ Maps the request to a endpoint (method).
-
-           uses a werkzeug adapter to match the route.
-        """
-
-        # get the adapter to match the url to a function
-        path_info = "/".join(self.traverse_subpath)
-        adapter = self.router.get_adapter(path_info)
-
-        try:
-            endpoint, values = adapter.match()
-            return getattr(self, 'json_' + endpoint)(request, **values)
-        except HTTPException, e:
-            return error(e.__str__())
-
-    @property
-    def portal(self):
-        portal_state = getMultiAdapter((self.context, self.request),
-                name=u'plone_portal_state')
-        return portal_state.portal()
-
-    @property
-    def portal_path(self):
-        return "/".join(self.portal.getPhysicalPath())
-
-    def get_sort_on(self, request):
-        """ returns the 'sort_on' from the request
-        """
-        sort_on = request.form.get("sort_on")
-        if sort_on in self.ALLOWED_SORT_INDEX:
-            return sort_on
-        return "getObjPositionInParent"
-
-    def get_sort_order(self, request):
-        """ returns the 'sort_order' from the request
-        """
-        sort_order = request.form.get("sort_order")
-        if sort_order in ["ascending", "a", "asc", "up", "high"]:
-            return "ascending"
-        if sort_order in ["descending", "d", "desc", "down", "low"]:
-            return "descending"
-        return "descending"
-
-    def get_sort_limit(self, request):
-        """ returns the 'sort_limit' from the request
-        """
-        limit = request.form.get("limit")
-        if limit is None or not limit.isdigit():
-            return None
-        return int(limit)
-
-    def get_portal_type(self, request):
-        """ returns the 'portal_type' from the request
-        """
-        portal_type = request.form.get("portal_type")
-        if portal_type in self.ALLOWED_TYPES_TO_SEARCH:
-            return portal_type
-        return self.ALLOWED_TYPES_TO_SEARCH
-
-    def get_start(self, request):
-        """ returns the 'start' from the request
-        """
-        start = request.form.get("start")
-        rng = request.form.get("range", "min")
-        try:
-            dt = DateTime(start)
-        except:
-            dt = DateTime()
-        return dict(query=dt, range=rng)
-
-    def get_query(self, request):
-        """ returns the 'query' from the request
-        """
-        q = request.form.get("q", "")
-
-        qs = q.lstrip("*.!$%&/()=#-+:'`´^")
-        if qs and not qs.endswith("*"):
-            qs += "*"
-        return qs
-
-    ###########################################################################
-    # CUSTOM JSON METHODS
-    ###########################################################################
-    @runtime
-    def json_contents(self, request, content=None):
-        """ Return JSON for all content types
-        """
-        query = {
-                "sort_on": self.get_sort_on(request),
-                "portal_type": self.get_portal_type(request),
-                "sort_order": self.get_sort_order(request),
-                "sort_limit": self.get_sort_limit(request),
-                "SearchableText": self.get_query(request),
-                }
-
-        if content:
-            query.update({"id": content})
-
-        results = self.catalog.search(query)
-        return success("success", **results)
-
-    @runtime
-    def json_query(self, request):
-        """ Query the Searchable Text Catalog only
-        """
-        query = {
-                "portal_type": self.get_portal_type(request),
-                "sort_on": self.get_sort_on(request),
-                "sort_order": self.get_sort_order(request),
-                "sort_limit": self.get_sort_limit(request),
-                "SearchableText": self.get_query(request),
-                }
-
-        logger.info("PloneJSONAPI::json_query:query=%r" % query)
-        results = self.catalog.search(query)
-        return success("success", **results)
-
-    @runtime
-    def json_version(self, request):
-        """ return JSON API Version
-        """
-        logger.debug("json_version")
-        response = dict(version=__version__,
-                        build=__build__,
-                        date=__date__)
-        return response
-
+        return self.dispatch()
 
 # vim: set ft=python ts=4 sw=4 expandtab :

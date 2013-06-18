@@ -6,36 +6,49 @@ __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
 from werkzeug.routing import Map, Rule
-from Acquisition import aq_inner
+from interfaces import IRouter
+from zope import interface
 
 
 class Router(object):
-    """ Plone API Router Tool
+    """ Router Utility
     """
+    interface.implements(IRouter)
 
-    def __init__(self, context, request):
-        self.context = aq_inner(context)
-        self.request = request
+    def __init__(self):
+        self.servername = ""
+        self.rule_class = Rule
+        self.view_functions = {}
+        self.url_map = Map()
 
-    @property
-    def url_map(self):
-        return Map([
-            Rule('/contents', endpoint='contents'),
-            Rule('/contents/<string:content>', endpoint='contents'),
-            Rule('/query', endpoint='query'),
-            Rule('/version', endpoint='version'),
-            ])
+    def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+        if endpoint is None:
+            endpoint = view_func.__name__
 
-    @property
-    def servername(self):
-        server_name = self.request.get("SERVER_NAME")
-        server_port = self.request.get("SERVER_PORT")
-        return "%s:%s" % (server_name, server_port)
+        old_func = self.view_functions.get(endpoint)
+        if old_func is not None and old_func != view_func:
+            raise AssertionError('View function mapping is overwriting an '
+                                 'existing endpoint function: %s' % endpoint)
+
+        self.view_functions[endpoint] = view_func
+        self.url_map.add(self.rule_class(rule, endpoint=endpoint))
+
+    def set_servername(self, request):
+        server_name = request.get("SERVER_NAME")
+        server_port = request.get("SERVER_PORT")
+        self.servername = "%s:%s" % (server_name, server_port)
 
     def get_adapter(self, path_info):
         # get the adapter to match the url to a function
         adapter = self.url_map.bind(
                 self.servername, path_info=path_info)
         return adapter
+
+    def __call__(self, path):
+        """ calls the matching view function for the given path
+        """
+        adapter = self.get_adapter(path)
+        endpoint, values = adapter.match()
+        return self.view_functions[endpoint](**values)
 
 # vim: set ft=python ts=4 sw=4 expandtab :

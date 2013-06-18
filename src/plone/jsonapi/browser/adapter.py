@@ -14,35 +14,18 @@ from interfaces import IInfo
 
 
 class BaseInfo(object):
-    """
+    """ Default Adapter for ATContent Types.
+
+    Gets called on an items detail page, e.g the leaf resource.
+    Write custom adapters here to provide additional JSON data.
     """
     interface.implements(IInfo)
     component.adapts(IATContentType)
 
     def __init__(self, context):
         self.context = context
-        self.imageview = component.getMultiAdapter((context, context.REQUEST),
-                name=u'images')
-
-    def get_image_url(self, name):
-        img = getattr(self.context, name, "")
-        if img:
-            return img.absolute_url()
-        return img
-
-    def get_scaled_image_url(self, name, scale="mini"):
-        try:
-            scaled = self.imageview.scale(name, scale=scale)
-        except AttributeError:
-            return ""
-        if scaled is None:
-            return ""
-        return scaled.url
-
-    def to_dict(self, obj):
-        return {}
 
     def __call__(self):
-        return self.to_dict(self.context)
+        return {}
 
 # vim: set ft=python ts=4 sw=4 expandtab :

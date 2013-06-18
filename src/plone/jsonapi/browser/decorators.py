@@ -7,6 +7,20 @@ __docformat__ = 'plaintext'
 
 import time
 import simplejson as json
+from helpers import error
+
+
+def handle_errors(f):
+    """ simple JSON error handler
+    """
+
+    def decorator(*args, **kwargs):
+        try:
+            return f(*args, **kwargs)
+        # XXX we should create a custom Exception class
+        except Exception, e:
+            return error(str(e))
+    return decorator
 
 
 def runtime(func):

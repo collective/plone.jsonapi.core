@@ -3,15 +3,26 @@
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="plone.jsonapi">
 
-  <!-- Plone API View -->
+  <!-- API Framework -->
   <browser:page
       name="API"
       for="*"
       class=".api.API"
       permission="zope2.View"
-      allowed_interface=".interfaces.IPloneJSONAPI"
+      allowed_interface=".interfaces.IAPI"
       />
 
+    <!-- the router utility -->
+    <utility
+        provides=".interfaces.IRouter"
+        factory=".router.Router" />
+
+    <!-- Extension point for custom routes -->
+    <utility
+        provides=".interfaces.IRouteProvider"
+        factory=".routes.PloneRoutes" />
+
+    <!-- Default Adapter for all content types -->
     <adapter
         for="Products.ATContentTypes.interface.interfaces.IATContentType"
         factory=".adapter.BaseInfo"

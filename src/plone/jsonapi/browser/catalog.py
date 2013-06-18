@@ -71,7 +71,7 @@ class Catalog(object):
         if id is not None and self.isUID(id):
             logger.info("Received UID %s" % id)
             # portal catalog gives us also PloneGazette brains when searching
-            # for an Orga UID, WTF? Perhaps because they also manage some kind
+            # for an UID, WTF? Perhaps because they also manage some kind
             # of braindead catalog!
             # workaround: search first the uid catalog and then the portal
             # catalog with uid and id in query. We need a portal_catalog brain
@@ -85,6 +85,8 @@ class Catalog(object):
         logger.info("Catalog Query=%r" % query)
         brains = self.portal_catalog(query)
 
+        # if the id is given, we wakup the object an put in additional data
+        # provided by the IInfo adapter
         with_object_info = id is not None
         results = self.get_results(brains, with_object_info)
 
@@ -114,6 +116,8 @@ class Brain(object):
 
     @property
     def brain_info(self):
+        """ infos extracted from the catalog brain
+        """
         brain = self.brain
         return dict(
             id = brain.getId,
@@ -130,6 +134,8 @@ class Brain(object):
 
     @property
     def object_info(self):
+        """ infos extracted from the object
+        """
         obj = self.brain.getObject()
         adapter = IInfo(obj)
         return adapter()
