@@ -5,18 +5,21 @@
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
-from werkzeug.routing import Map, Rule
-from interfaces import IRouter
 from zope import interface
+from werkzeug.routing import Map, Rule
+
+from interfaces import IRouter
 
 
 class Router(object):
-    """ Router Utility
+    """ API Router Tool
     """
     interface.implements(IRouter)
 
-    def __init__(self):
-        self.servername = ""
+    def __init__(self, context, request):
+        self.context = context
+        self.request = request
+
         self.rule_class = Rule
         self.view_functions = {}
         self.url_map = Map()
@@ -33,10 +36,11 @@ class Router(object):
         self.view_functions[endpoint] = view_func
         self.url_map.add(self.rule_class(rule, endpoint=endpoint))
 
-    def set_servername(self, request):
-        server_name = request.get("SERVER_NAME")
-        server_port = request.get("SERVER_PORT")
-        self.servername = "%s:%s" % (server_name, server_port)
+    @property
+    def servername(self):
+        server_name = self.request.get("SERVER_NAME")
+        server_port = self.request.get("SERVER_PORT")
+        return "%s:%s" % (server_name, server_port)
 
     def get_adapter(self, path_info):
         # get the adapter to match the url to a function

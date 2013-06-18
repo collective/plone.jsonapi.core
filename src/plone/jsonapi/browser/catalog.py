@@ -8,13 +8,16 @@ __docformat__ = 'plaintext'
 import re
 import logging
 
+from zope import component
+from zope import interface
+
 from Products.CMFCore.utils import getToolByName
 from plone.memoize.view import memoize_contextless
-from zope.component import getAdapter
 from Acquisition import aq_inner
 
-from plone.jsonapi.browser.interfaces import IInfo
-from plone.jsonapi.browser.url import URL
+from url import URL
+from interfaces import IInfo
+from interfaces import ICatalog
 
 logger = logging.getLogger("plone.jsonapi::catalog")
 
@@ -24,6 +27,7 @@ REGEX = re.compile("[a-z0-9]{32}")
 class Catalog(object):
     """ Plone API Catalog wrapper
     """
+    interface.implements(ICatalog)
 
     def __init__(self, context, request):
         self.context = aq_inner(context)
@@ -88,13 +92,13 @@ class Catalog(object):
 
         # if the id is given, we wakup the object an put in additional data
         # provided by the IInfo adapter
-        with_object_info = id is not None
-        results = self.get_results(brains, with_object_info)
+        wakeup_object = id is not None
+        results = self.get_results(brains, wakeup_object)
 
         return dict(count=len(results),
                     items=results)
 
-    def get_results(self, brains, with_object_info=False):
+    def get_results(self, brains, wakeup_object=False):
 
         if brains is None:
             brains = []
@@ -104,7 +108,7 @@ class Catalog(object):
             info = self.brain_info(brain)
 
             # Wake up object and get object infos
-            if with_object_info:
+            if wakeup_object:
                 info.update(self.object_info(brain))
 
             # XXX refactor!
@@ -116,14 +120,14 @@ class Catalog(object):
     def brain_info(self, brain):
         """ infos extracted from the catalog brain
         """
-        adapter = getAdapter(brain, IInfo, "braininfo")
+        adapter = component.getAdapter(brain, IInfo, "braininfo")
         return adapter()
 
     def object_info(self, brain):
         """ infos extracted from the object
         """
         obj = brain.getObject()
-        adapter = getAdapter(obj, IInfo, "objectinfo")
+        adapter = component.getAdapter(obj, IInfo, "objectinfo")
         return adapter()
 
 # vim: set ft=python ts=4 sw=4 expandtab :

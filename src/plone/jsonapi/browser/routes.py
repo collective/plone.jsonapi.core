@@ -14,7 +14,6 @@ from DateTime import DateTime
 
 # local imports
 from interfaces import IRouteProvider
-from catalog import Catalog
 from helpers import success
 
 logger = logging.getLogger("plone.jsonapi.routes")
@@ -42,8 +41,7 @@ class PloneRoutes(object):
         self.context = context
         self.request = request
 
-        # XXX: make a global utility here
-        self.catalog = Catalog(context, request)
+        self._catalog = None
 
     @property
     def routes(self):
@@ -53,6 +51,14 @@ class PloneRoutes(object):
             ("/contents", "contents", self.json_contents),
             ("/contents/<string:content>", "contents", self.json_contents),
         )
+
+    @property
+    def catalog(self):
+        if self._catalog is None:
+            self._catalog = component.getMultiAdapter(
+                    (self.context, self.request),
+                    name=u'api_catalog')
+        return self._catalog
 
     @property
     def portal(self):

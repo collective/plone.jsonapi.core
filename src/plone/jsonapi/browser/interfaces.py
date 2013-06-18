@@ -18,6 +18,15 @@ class IRouter(interface.Interface):
     """
 
 
+class ICatalog(interface.Interface):
+    """ The API catalog utility
+    """
+
+    def search(self, query):
+        """ gets a query and has to return a dictionary
+        """
+
+
 class IRouteProvider(interface.Interface):
     """ utlitiy which provides an api route
     """

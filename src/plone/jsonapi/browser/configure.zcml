@@ -9,32 +9,40 @@
       for="*"
       class=".api.API"
       permission="zope2.View"
-      allowed_interface=".interfaces.IAPI"
-      />
+      allowed_interface=".interfaces.IAPI" />
 
-    <!-- the router utility -->
-    <utility
+    <!-- The API Router Tool -->
+    <adapter
+        name="api_router"
+        for="zope.interface.Interface
+             zope.publisher.interfaces.browser.IBrowserRequest"
         provides=".interfaces.IRouter"
         factory=".router.Router" />
 
-    <!-- Extension point for custom routes -->
-    <utility
-        provides=".interfaces.IRouteProvider"
-        factory=".routes.PloneRoutes" />
+    <!-- The API Catalog adapter -->
+    <adapter
+        name="api_catalog"
+        for="zope.interface.Interface
+             zope.publisher.interfaces.browser.IBrowserRequest"
+        provides=".interfaces.ICatalog"
+        factory=".catalog.Catalog" />
 
     <!-- Default Adapter for all catalog brains -->
     <adapter
         name="braininfo"
-        for="*"
-        factory=".adapter.BrainInfo"
-        />
+        for="Products.ZCatalog.interfaces.ICatalogBrain"
+        factory=".adapter.BrainInfo" />
 
     <!-- Default Adapter for all content types -->
     <adapter
         name="objectinfo"
         for="Products.ATContentTypes.interface.interfaces.IATContentType"
-        factory=".adapter.ObjectInfo"
-        />
+        factory=".adapter.ObjectInfo" />
+
+    <!-- Extension point for custom routes -->
+    <utility
+        provides=".interfaces.IRouteProvider"
+        factory=".routes.PloneRoutes" />
 
 </configure>
 

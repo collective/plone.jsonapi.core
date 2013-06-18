@@ -7,6 +7,9 @@ __docformat__ = 'plaintext'
 
 import logging
 
+from zope import interface
+from zope import component
+
 from zope.interface import implements
 from zope.component import getUtility
 from zope.component import getUtilitiesFor
@@ -34,14 +37,21 @@ class API(BrowserView):
         self.context = context
         self.request = request
 
+        self._router = None
         self.traverse_subpath = []
-        self.router = getUtility(IRouter)
         self.register()
+
+    @property
+    def router(self):
+        if self._router is None:
+            self._router = component.getMultiAdapter(
+                    (self.context, self.request),
+                    name=u'api_router')
+        return self._router
 
     def register(self):
         """ queries all route prviders and initialize them
         """
-
         providers = getUtilitiesFor(IRouteProvider)
         for name, instance in providers:
 
