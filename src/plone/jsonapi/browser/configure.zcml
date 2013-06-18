@@ -27,6 +27,14 @@
         provides=".interfaces.ICatalog"
         factory=".catalog.Catalog" />
 
+    <!-- The API URL Tool -->
+    <adapter
+        name="api_url"
+        for="zope.interface.Interface
+             zope.publisher.interfaces.browser.IBrowserRequest"
+        provides=".interfaces.IURL"
+        factory=".url.URL" />
+
     <!-- Default Adapter for all catalog brains -->
     <adapter
         name="braininfo"

@@ -5,6 +5,8 @@
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
+import logging
+
 from zope import interface
 from zope import component
 
@@ -12,6 +14,8 @@ from DateTime.interfaces import IDateTime
 from Products.ATContentTypes.interface.interfaces import IATContentType
 
 from interfaces import IInfo
+
+logger = logging.getLogger("plone.jsonapi.adapter")
 
 
 class BrainInfo(object):
@@ -22,6 +26,11 @@ class BrainInfo(object):
 
     def __init__(self, brain):
         self.brain = brain
+        # a mapping to specify the resource for this type.
+        # For example: {'Documents': 'documents'}
+        # will route the portal_type "Document" under the 'documents' URL
+        # resource
+        self.resources = {}
 
     def __call__(self):
         """ infos extracted from the catalog brain
@@ -56,6 +65,9 @@ class ObjectInfo(object):
     def get_fields(self):
         out = []
         for field in self.context.schema.fields():
+            if field.type == "object":
+                logger.warning("Skipping object field %s" % field.getName())
+                continue
             out.append({
                 "name": field.getName(),
                 "type": field.type,
@@ -73,6 +85,5 @@ class ObjectInfo(object):
         return {
             "fields": self.get_fields(),
         }
-
 
 # vim: set ft=python ts=4 sw=4 expandtab :

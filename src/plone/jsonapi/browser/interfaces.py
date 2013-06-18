@@ -27,6 +27,19 @@ class ICatalog(interface.Interface):
         """
 
 
+class IURL(interface.Interface):
+    """ The API URL utility
+    """
+
+    def get_api_url(self, brain):
+        """ returns the api_url as string
+        """
+
+    def get_urls(self, brain):
+        """ returns a dict of api urls for the given brain
+        """
+
+
 class IRouteProvider(interface.Interface):
     """ utlitiy which provides an api route
     """

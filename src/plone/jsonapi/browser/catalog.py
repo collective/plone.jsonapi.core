@@ -32,7 +32,15 @@ class Catalog(object):
     def __init__(self, context, request):
         self.context = aq_inner(context)
         self.request = request
-        self.url = URL(context, request)
+        self._url_tool = None
+
+    @property
+    def url_tool(self):
+        if self._url_tool is None:
+            self._url_tool = component.getMultiAdapter(
+                    (self.context, self.request),
+                    name=u'api_url')
+        return self._url_tool
 
     @property
     @memoize_contextless
@@ -111,8 +119,8 @@ class Catalog(object):
             if wakeup_object:
                 info.update(self.object_info(brain))
 
-            # XXX refactor!
-            info.update(self.url.get_urls(brain))
+            # inject the api url
+            info.update(self.url_tool.get_urls(brain))
 
             results.append(info)
         return results
