@@ -24,8 +24,6 @@ __build__ = 0
 __date__ = "2013-06-17"
 
 
-
-
 class PloneRoutes(object):
     interface.implements(IRouteProvider)
 

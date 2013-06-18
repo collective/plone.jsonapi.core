@@ -22,10 +22,18 @@
         provides=".interfaces.IRouteProvider"
         factory=".routes.PloneRoutes" />
 
+    <!-- Default Adapter for all catalog brains -->
+    <adapter
+        name="braininfo"
+        for="*"
+        factory=".adapter.BrainInfo"
+        />
+
     <!-- Default Adapter for all content types -->
     <adapter
+        name="objectinfo"
         for="Products.ATContentTypes.interface.interfaces.IATContentType"
-        factory=".adapter.BaseInfo"
+        factory=".adapter.ObjectInfo"
         />
 
 </configure>

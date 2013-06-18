@@ -10,6 +10,7 @@ import logging
 
 from Products.CMFCore.utils import getToolByName
 from plone.memoize.view import memoize_contextless
+from zope.component import getAdapter
 from Acquisition import aq_inner
 
 from plone.jsonapi.browser.interfaces import IInfo
@@ -93,57 +94,36 @@ class Catalog(object):
         return dict(count=len(results),
                     items=results)
 
-    def get_results(self, brains, with_object_info):
+    def get_results(self, brains, with_object_info=False):
 
         if brains is None:
             brains = []
 
         results = list()
         for brain in brains:
-            wrapper = Brain(brain)
-            info = wrapper.to_dict(with_object_info)
+            info = self.brain_info(brain)
+
+            # Wake up object and get object infos
+            if with_object_info:
+                info.update(self.object_info(brain))
+
+            # XXX refactor!
             info.update(self.url.get_urls(brain))
+
             results.append(info)
         return results
 
-
-class Brain(object):
-    """ simple brain wrapper
-    """
-
-    def __init__(self, brain):
-        self.brain = brain
-
-    @property
-    def brain_info(self):
+    def brain_info(self, brain):
         """ infos extracted from the catalog brain
         """
-        brain = self.brain
-        return dict(
-            id = brain.getId,
-            title = brain.Title,
-            description = brain.Description,
-            url = brain.getURL(),
-            portal_type = brain.portal_type,
-            created = brain.created.ISO8601(),
-            modified = brain.modified.ISO8601(),
-            effective = brain.effective.ISO8601(),
-            type = brain.portal_type,
-            tags = brain.subject,
-        )
-
-    @property
-    def object_info(self):
-        """ infos extracted from the object
-        """
-        obj = self.brain.getObject()
-        adapter = IInfo(obj)
+        adapter = getAdapter(brain, IInfo, "braininfo")
         return adapter()
 
-    def to_dict(self, with_object_info):
-        info = self.brain_info
-        if with_object_info:
-            info.update(self.object_info)
-        return info
+    def object_info(self, brain):
+        """ infos extracted from the object
+        """
+        obj = brain.getObject()
+        adapter = getAdapter(obj, IInfo, "objectinfo")
+        return adapter()
 
 # vim: set ft=python ts=4 sw=4 expandtab :
