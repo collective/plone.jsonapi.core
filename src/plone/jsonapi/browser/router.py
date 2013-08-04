@@ -29,6 +29,13 @@ class Router(object):
         self.url_map = Map()
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, options=None):
+        """ adds a rule to the url map
+
+        :param rule:      the url rule, e.g /version
+        :param endpoint:  the name of the rule, e.g version
+        :param endpoint:  The endpoint for this rule. This can be anything
+        :param options:   additional options to be passed to the router
+        """
         if endpoint is None:
             endpoint = view_func.__name__
 
@@ -40,6 +47,7 @@ class Router(object):
         self.view_functions[endpoint] = view_func
 
         if options is None:
+            # http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.Rule
             return self.url_map.add(self.rule_class(rule, endpoint=endpoint))
 
         return self.url_map.add(self.rule_class(rule, endpoint=endpoint, **options))
@@ -63,6 +71,7 @@ class Router(object):
         logger.info("router.__call__: method=%s" % method)
         adapter = self.get_adapter(path)
         endpoint, values = adapter.match(method=method)
+
         return self.view_functions[endpoint](**values)
 
 # vim: set ft=python ts=4 sw=4 expandtab :
