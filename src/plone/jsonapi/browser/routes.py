@@ -46,7 +46,7 @@ class PloneRoutes(object):
     @property
     def routes(self):
         return (
-            ("/version", "version", self.json_version),
+            ("/version", "version", self.json_version, dict(methods=['GET'])),
             ("/query", "query", self.json_query),
             ("/contents", "contents", self.json_contents),
             ("/contents/<string:content>", "contents", self.json_contents),

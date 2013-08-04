@@ -28,7 +28,7 @@ class Router(object):
         self.view_functions = {}
         self.url_map = Map()
 
-    def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
+    def add_url_rule(self, rule, endpoint=None, view_func=None, options=None):
         if endpoint is None:
             endpoint = view_func.__name__
 
@@ -38,7 +38,11 @@ class Router(object):
                                  'existing endpoint function: %s' % endpoint)
 
         self.view_functions[endpoint] = view_func
-        self.url_map.add(self.rule_class(rule, endpoint=endpoint))
+
+        if options is None:
+            return self.url_map.add(self.rule_class(rule, endpoint=endpoint))
+
+        return self.url_map.add(self.rule_class(rule, endpoint=endpoint, **options))
 
     @property
     def servername(self):
@@ -55,8 +59,10 @@ class Router(object):
     def __call__(self, path):
         """ calls the matching view function for the given path
         """
+        method = self.request.method
+        logger.info("router.__call__: method=%s" % method)
         adapter = self.get_adapter(path)
-        endpoint, values = adapter.match()
+        endpoint, values = adapter.match(method=method)
         return self.view_functions[endpoint](**values)
 
 # vim: set ft=python ts=4 sw=4 expandtab :
