@@ -1,6 +1,7 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:zcml="http://namespaces.zope.org/zcml"
     i18n_domain="plone.jsonapi">
 
   <!-- API Framework -->
@@ -41,11 +42,18 @@
         for="Products.ZCatalog.interfaces.ICatalogBrain"
         factory=".adapter.BrainInfo" />
 
-    <!-- Default Adapter for all content types -->
+    <!-- Default Adapter for ATContentTypes -->
     <adapter
         name="objectinfo"
         for="Products.ATContentTypes.interface.interfaces.IATContentType"
         factory=".adapter.ObjectInfo" />
+
+    <configure zcml:condition="installed plone.dexterity">
+        <adapter
+            name="objectinfo"
+            for="plone.dexterity.interfaces.IDexterityContent"
+            factory=".adapter.ObjectInfo" />
+    </configure>
 
     <!-- Extension point for custom routes -->
     <utility

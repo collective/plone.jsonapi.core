@@ -13,6 +13,12 @@ from DateTime.interfaces import IDateTime
 
 from interfaces import IInfo
 
+try:
+    import plone.dexterity
+    DEXTERITY=True
+except ImportError:
+    DEXTERITY=False
+
 logger = logging.getLogger("plone.jsonapi.adapter")
 
 
@@ -59,6 +65,11 @@ class ObjectInfo(object):
         self.context = context
 
     def get_fields(self):
+        if DEXTERITY:
+            return []
+        return self.get_at_fields()
+
+    def get_at_fields(self):
         out = []
         for field in self.context.schema.fields():
             if field.type == "object":

@@ -99,10 +99,11 @@ class PloneRoutes(object):
     def get_portal_type(self, request):
         """ returns the 'portal_type' from the request
         """
-        portal_type = request.form.get("portal_type")
-        if portal_type in self.ALLOWED_TYPES_TO_SEARCH:
-            return portal_type
-        return self.ALLOWED_TYPES_TO_SEARCH
+        #portal_type = request.form.get("portal_type")
+        #if portal_type in self.ALLOWED_TYPES_TO_SEARCH:
+        #    return portal_type
+        #return self.ALLOWED_TYPES_TO_SEARCH
+        return self.portal.portal_types.keys()
 
     def get_start(self, request):
         """ returns the 'start' from the request
@@ -140,8 +141,7 @@ class PloneRoutes(object):
                 "SearchableText": self.get_query(request),
                 }
 
-        if content:
-
+        if content is not None:
             query.update({"id": content})
 
         results = self.catalog.search(query)

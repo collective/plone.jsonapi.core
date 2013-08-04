@@ -90,9 +90,12 @@ class Catalog(object):
             # catalog with uid and id in query. We need a portal_catalog brain
             # because of the metadata!
             brain = self.search_uid(id)
-            if brain is not None:
+            if brain:
                 # update the query with uid and id to get a unique result
                 query.update({"id": brain.id, "UID": brain.UID})
+            else:
+                del query["id"]
+                query.update({"UID": id})
 
         # search the portal catalog
         logger.info("Catalog Query=%r" % query)
