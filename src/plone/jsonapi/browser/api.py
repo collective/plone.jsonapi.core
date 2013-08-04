@@ -65,8 +65,6 @@ class API(BrowserView):
 
             # 2. add the provided routes to the router
             for route in routes:
-                logger.info("Register new url rules! \
-                            url=%s, endpoint=%s, view_func=%r" % route)
                 self.router.add_url_rule(*route)
 
     def publishTraverse(self, request, name):

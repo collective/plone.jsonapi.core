@@ -5,10 +5,14 @@
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
+import logging
+
 from zope import interface
 from werkzeug.routing import Map, Rule
 
 from interfaces import IRouter
+
+logger = logging.getLogger("plone.jsonapi.router")
 
 
 class Router(object):
