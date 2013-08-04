@@ -8,10 +8,8 @@ __docformat__ = 'plaintext'
 import logging
 
 from zope import interface
-from zope import component
 
 from DateTime.interfaces import IDateTime
-from Products.ATContentTypes.interface.interfaces import IATContentType
 
 from interfaces import IInfo
 
@@ -22,7 +20,6 @@ class BrainInfo(object):
     """ Default Adapter for Catalog Brains.
     """
     interface.implements(IInfo)
-    component.adapts(interface.Interface)
 
     def __init__(self, brain):
         self.brain = brain
@@ -51,13 +48,12 @@ class BrainInfo(object):
 
 
 class ObjectInfo(object):
-    """ Default Adapter for ATContent Type Objects.
+    """ Default Adapter for Plone content type objects.
 
     Gets called on an items detail page, e.g the leaf resource.
     Write custom adapters here to provide additional JSON data.
     """
     interface.implements(IInfo)
-    component.adapts(IATContentType)
 
     def __init__(self, context):
         self.context = context
