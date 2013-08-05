@@ -17,6 +17,14 @@ class IRouter(interface.Interface):
     """ The API Router
     """
 
+    def __call__(self, path):
+        """ gets called with the resource path
+        """
+
+    def add_url_rule(self, rule, endpoint=None, view_func=None, options=None):
+        """ adds an url rule to the routing mechanism
+        """
+
 
 class ICatalog(interface.Interface):
     """ The API catalog utility

@@ -18,17 +18,15 @@ from helpers import success
 
 logger = logging.getLogger("plone.jsonapi.routes")
 
-__version__ = 0.1
-__build__ = 0
-__date__ = "2013-06-17"
+__version__ = 0.2
+__build__ = 10
+__date__ = "2013-08-05"
 
 
 class PloneRoutes(object):
     interface.implements(IRouteProvider)
 
-    ALLOWED_TYPES_TO_SEARCH = [
-        "Document", "File", "Image", "Collection", "Event", "News Item",
-    ]
+    ALLOWED_TYPES_TO_SEARCH = []
 
     ALLOWED_SORT_INDEX = [
         "id", "created", "modified", "sortable_title", "start", "end",
@@ -99,11 +97,12 @@ class PloneRoutes(object):
     def get_portal_type(self, request):
         """ returns the 'portal_type' from the request
         """
-        #portal_type = request.form.get("portal_type")
-        #if portal_type in self.ALLOWED_TYPES_TO_SEARCH:
-        #    return portal_type
-        #return self.ALLOWED_TYPES_TO_SEARCH
-        return self.portal.portal_types.keys()
+        allowed = self.ALLOWED_TYPES_TO_SEARCH or self.portal.portal_types.keys()
+        portal_type = request.form.get("portal_type")
+
+        if portal_type in allowed:
+            return portal_type
+        return allowed
 
     def get_start(self, request):
         """ returns the 'start' from the request

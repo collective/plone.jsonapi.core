@@ -94,6 +94,7 @@ class Catalog(object):
                 # update the query with uid and id to get a unique result
                 query.update({"id": brain.id, "UID": brain.UID})
             else:
+                # Plone Dexterity content
                 del query["id"]
                 query.update({"UID": id})
 
