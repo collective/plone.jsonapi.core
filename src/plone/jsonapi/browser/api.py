@@ -56,6 +56,7 @@ class API(BrowserView):
         for name, instance in providers:
 
             # 1. initialize the route provider with the context and request
+            # XXX: this should be removed
             if getattr(instance, "initialize", False):
                 instance.initialize(self.context, self.request)
 
@@ -78,7 +79,7 @@ class API(BrowserView):
         """ dispatches the given subpath to the router
         """
         path = "/".join(self.traverse_subpath)
-        return self.router(path)
+        return self.router(self.context, self.request, path)
 
     @returns_json
     @runtime

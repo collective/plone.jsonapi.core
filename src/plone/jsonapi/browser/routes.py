@@ -128,7 +128,7 @@ class PloneRoutes(object):
     ###########################################################################
     # CUSTOM JSON METHODS
     ###########################################################################
-    def json_contents(self, content=None):
+    def json_contents(self, context, request, content=None):
         """ Return JSON for all content types
         """
         request = self.request
@@ -146,7 +146,7 @@ class PloneRoutes(object):
         results = self.catalog.search(query)
         return success("success", **results)
 
-    def json_query(self):
+    def json_query(self, context, request):
         """ Query the Searchable Text Catalog only
         """
         request = self.request
@@ -162,7 +162,7 @@ class PloneRoutes(object):
         results = self.catalog.search(query)
         return success("success", **results)
 
-    def json_version(self):
+    def json_version(self, context, request):
         """ return JSON API Version
         """
         logger.debug("json_version")

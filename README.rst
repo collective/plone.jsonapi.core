@@ -99,7 +99,7 @@ following code::
         @property
         def routes(self):
             return (
-                ("/hello/<string:name>", "hello", self.json_hello, dict(methods=['GET']))
+                ("/hello/<string:name>", "hello", self.json_hello, dict(methods=['GET'])),
             )
 
         def json_hello(self, name="world"):
@@ -113,6 +113,15 @@ To register the utility, we add this directive to the ``configure.zcml`` file::
         name="my_routes"
         provides="plone.jsonapi.interfaces.IRouteProvider"
         factory=".routes.ExampleRoutes" />
+
+Or use grok::
+
+
+    from five import grok
+
+    ...
+
+    grok.global_utility(ExampleRoutes, name="my_routes", direct=False)
 
 Each route provider gets initialized with the ``context`` and the ``request`` in a
 method called ``initialize``. This method gets called by the API framework.
