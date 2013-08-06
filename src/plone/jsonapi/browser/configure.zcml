@@ -12,14 +12,6 @@
       permission="zope2.View"
       allowed_interface=".interfaces.IAPI" />
 
-    <!-- The API Router Tool -->
-    <adapter
-        name="api_router"
-        for="zope.interface.Interface
-             zope.publisher.interfaces.browser.IBrowserRequest"
-        provides=".interfaces.IRouter"
-        factory=".router.Router" />
-
     <!-- The API Catalog adapter -->
     <adapter
         name="api_catalog"
@@ -54,6 +46,12 @@
             for="plone.dexterity.interfaces.IDexterityContent"
             factory=".adapter.ObjectInfo" />
     </configure>
+
+    <!-- the default router -->
+    <utility
+        name="default"
+        provides=".interfaces.IRouter"
+        factory=".router.DefaultRouterFactory" />
 
     <!-- Extension point for custom routes -->
     <utility
