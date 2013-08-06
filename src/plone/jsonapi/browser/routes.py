@@ -36,6 +36,7 @@ class PloneRoutes(object):
     def initialize(self, context, request):
         """ Called by the API Framework
         """
+        logger.info("PloneRoutes::initialize context=%r, request=%r", context, request)
         self.context = context
         self.request = request
 
