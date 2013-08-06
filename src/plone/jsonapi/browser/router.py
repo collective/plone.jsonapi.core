@@ -64,7 +64,7 @@ class Router(object):
                 self.servername, path_info=path_info)
         return adapter
 
-    def __call__(self, path):
+    def __call__(self, context, request, path):
         """ calls the matching view function for the given path
         """
         method = self.request.method
@@ -72,6 +72,6 @@ class Router(object):
         adapter = self.get_adapter(path)
         endpoint, values = adapter.match(method=method)
 
-        return self.view_functions[endpoint](**values)
+        return self.view_functions[endpoint](context, request, **values)
 
 # vim: set ft=python ts=4 sw=4 expandtab :
