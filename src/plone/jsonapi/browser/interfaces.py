@@ -17,7 +17,7 @@ class IRouter(interface.Interface):
     """ The API Router
     """
 
-    def __call__(self, path):
+    def __call__(self, context, request, path):
         """ gets called with the resource path
         """
 

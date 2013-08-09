@@ -7,11 +7,9 @@ __docformat__ = 'plaintext'
 
 import logging
 
-from zope import interface
 from zope import component
 
 from zope.interface import implements
-from zope import component
 
 from Products.Five import BrowserView
 from zope.publisher.interfaces import IPublishTraverse
@@ -22,7 +20,6 @@ from decorators import handle_errors
 
 from interfaces import IAPI
 from interfaces import IRouter
-from interfaces import IRouteProvider
 
 logger = logging.getLogger("plone.jsonapi")
 
