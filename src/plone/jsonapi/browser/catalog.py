@@ -8,12 +8,16 @@ __docformat__ = 'plaintext'
 import re
 import logging
 
+from zope import component
+from zope import interface
+
 from Products.CMFCore.utils import getToolByName
 from plone.memoize.view import memoize_contextless
 from Acquisition import aq_inner
 
-from plone.jsonapi.browser.interfaces import IInfo
-from plone.jsonapi.browser.url import URL
+from url import URL
+from interfaces import IInfo
+from interfaces import ICatalog
 
 logger = logging.getLogger("plone.jsonapi::catalog")
 
@@ -23,11 +27,20 @@ REGEX = re.compile("[a-z0-9]{32}")
 class Catalog(object):
     """ Plone API Catalog wrapper
     """
+    interface.implements(ICatalog)
 
     def __init__(self, context, request):
         self.context = aq_inner(context)
         self.request = request
-        self.url = URL(context, request)
+        self._url_tool = None
+
+    @property
+    def url_tool(self):
+        if self._url_tool is None:
+            self._url_tool = component.getMultiAdapter(
+                    (self.context, self.request),
+                    name=u'api_url')
+        return self._url_tool
 
     @property
     @memoize_contextless
@@ -71,73 +84,62 @@ class Catalog(object):
         if id is not None and self.isUID(id):
             logger.info("Received UID %s" % id)
             # portal catalog gives us also PloneGazette brains when searching
-            # for an Orga UID, WTF? Perhaps because they also manage some kind
+            # for an UID, WTF? Perhaps because they also manage some kind
             # of braindead catalog!
             # workaround: search first the uid catalog and then the portal
             # catalog with uid and id in query. We need a portal_catalog brain
             # because of the metadata!
             brain = self.search_uid(id)
-            if brain is not None:
+            if brain:
                 # update the query with uid and id to get a unique result
                 query.update({"id": brain.id, "UID": brain.UID})
+            else:
+                # Plone Dexterity content
+                del query["id"]
+                query.update({"UID": id})
 
         # search the portal catalog
         logger.info("Catalog Query=%r" % query)
         brains = self.portal_catalog(query)
 
-        with_object_info = id is not None
-        results = self.get_results(brains, with_object_info)
+        # if the id is given, we wakup the object an put in additional data
+        # provided by the IInfo adapter
+        wakeup_object = id is not None
+        results = self.get_results(brains, wakeup_object)
 
         return dict(count=len(results),
                     items=results)
 
-    def get_results(self, brains, with_object_info):
+    def get_results(self, brains, wakeup_object=False):
 
         if brains is None:
             brains = []
 
         results = list()
         for brain in brains:
-            wrapper = Brain(brain)
-            info = wrapper.to_dict(with_object_info)
-            info.update(self.url.get_urls(brain))
+            info = self.brain_info(brain)
+
+            # Wake up object and get object infos
+            if wakeup_object:
+                info.update(self.object_info(brain))
+
+            # inject the api url
+            info.update(self.url_tool.get_urls(brain))
+
             results.append(info)
         return results
 
-
-class Brain(object):
-    """ simple brain wrapper
-    """
-
-    def __init__(self, brain):
-        self.brain = brain
-
-    @property
-    def brain_info(self):
-        brain = self.brain
-        return dict(
-            id = brain.getId,
-            title = brain.Title,
-            description = brain.Description,
-            url = brain.getURL(),
-            portal_type = brain.portal_type,
-            created = brain.created.ISO8601(),
-            modified = brain.modified.ISO8601(),
-            effective = brain.effective.ISO8601(),
-            type = brain.portal_type,
-            tags = brain.subject,
-        )
-
-    @property
-    def object_info(self):
-        obj = self.brain.getObject()
-        adapter = IInfo(obj)
+    def brain_info(self, brain):
+        """ infos extracted from the catalog brain
+        """
+        adapter = component.getAdapter(brain, IInfo, "braininfo")
         return adapter()
 
-    def to_dict(self, with_object_info):
-        info = self.brain_info
-        if with_object_info:
-            info.update(self.object_info)
-        return info
+    def object_info(self, brain):
+        """ infos extracted from the object
+        """
+        obj = brain.getObject()
+        adapter = component.getAdapter(obj, IInfo, "objectinfo")
+        return adapter()
 
 # vim: set ft=python ts=4 sw=4 expandtab :

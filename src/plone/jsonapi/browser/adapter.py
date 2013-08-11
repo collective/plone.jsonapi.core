@@ -5,44 +5,92 @@
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
-from zope import interface
-from zope import component
+import logging
 
-from Products.ATContentTypes.interface.interfaces import IATContentType
+from zope import interface
+
+from DateTime.interfaces import IDateTime
 
 from interfaces import IInfo
 
+try:
+    import plone.dexterity
+    DEXTERITY=True
+except ImportError:
+    DEXTERITY=False
 
-class BaseInfo(object):
-    """
+logger = logging.getLogger("plone.jsonapi.adapter")
+
+
+class BrainInfo(object):
+    """ Default Adapter for Catalog Brains.
     """
     interface.implements(IInfo)
-    component.adapts(IATContentType)
+
+    def __init__(self, brain):
+        self.brain = brain
+        # a mapping to specify the resource for this type.
+        # For example: {'Documents': 'documents'}
+        # will route the portal_type "Document" under the 'documents' URL
+        # resource
+        self.resources = {}
+
+    def __call__(self):
+        """ infos extracted from the catalog brain
+        """
+        brain = self.brain
+        return {
+            "id": brain.getId,
+            "title": brain.Title,
+            "description": brain.Description,
+            "url": brain.getURL(),
+            "portal_type": brain.portal_type,
+            "created": brain.created.ISO8601(),
+            "modified": brain.modified.ISO8601(),
+            "effective": brain.effective.ISO8601(),
+            "type": brain.portal_type,
+            "tags": brain.subject,
+        }
+
+
+class ObjectInfo(object):
+    """ Default Adapter for Plone content type objects.
+
+    Gets called on an items detail page, e.g the leaf resource.
+    Write custom adapters here to provide additional JSON data.
+    """
+    interface.implements(IInfo)
 
     def __init__(self, context):
         self.context = context
-        self.imageview = component.getMultiAdapter((context, context.REQUEST),
-                name=u'images')
 
-    def get_image_url(self, name):
-        img = getattr(self.context, name, "")
-        if img:
-            return img.absolute_url()
-        return img
+    def get_fields(self):
+        if DEXTERITY:
+            return []
+        return self.get_at_fields()
 
-    def get_scaled_image_url(self, name, scale="mini"):
-        try:
-            scaled = self.imageview.scale(name, scale=scale)
-        except AttributeError:
-            return ""
-        if scaled is None:
-            return ""
-        return scaled.url
+    def get_at_fields(self):
+        out = []
+        for field in self.context.schema.fields():
+            if field.type == "object":
+                logger.warning("Skipping object field %s" % field.getName())
+                continue
+            out.append({
+                "name": field.getName(),
+                "type": field.type,
+                "data": self.get_data(field),
+            })
+        return out
 
-    def to_dict(self, obj):
-        return {}
+    def get_data(self, field):
+        data = field.get(self.context)
+        if IDateTime.providedBy(data):
+            return data.ISO8601()
+        return data
 
     def __call__(self):
-        return self.to_dict(self.context)
+        return {
+            "fields": self.get_fields(),
+        }
 
 # vim: set ft=python ts=4 sw=4 expandtab :
