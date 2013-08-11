@@ -5,6 +5,10 @@ plone.jsonapi
 :Version: 0.2
 
 
+.. contents:: Table of Contents
+   :depth: 2
+
+
 Abstract
 --------
 
@@ -40,7 +44,7 @@ Example::
     auto-checkout = *
 
     [sources]
-    plone.jsonapi = git git://github.com/ramonski/plone.jsonapi.git
+    plone.jsonapi = git https://github.com/ramonski/plone.jsonapi.git branch=develop
 
     [instance]
     ...
@@ -52,8 +56,8 @@ Example::
 API URL
 -------
 
-After installation, the API View is available on your Plone root with the
-name ``@@API``, for example ``http://localhost:8080/Plone/@@API``
+After installation, the API View is available as a Browser View on your Plone
+site with the name ``@@API``, for example ``http://localhost:8080/Plone/@@API``.
 
 
 Quickstart
@@ -72,16 +76,39 @@ The main work is done in the ``plone.jsonapi.api`` module.  This module
 dispatches the incoming request and dispatches it to an endpoint function.
 
 
-Adding Routes
--------------
+The API Router
+--------------
 
-Routes get defined by so called "route providers". These are named utilities
-which implement the ``IRouteProvider`` interface.
+The Router is responsible to manage and maintain API routes to endpoints.
 
-Example
-~~~~~~~
+Routes get defined by so called "Route Providers".
 
-In this Example, we're going to add a simple route provider named ``my_routes``.
+A route provider is either a named Utility class, wich implements the
+``IRouteProvider`` interface, or simply a function, which is registered
+via the ``add_route`` decorator.
+
+
+Basic Example
+~~~~~~~~~~~~~
+
+The most basic route provider is simply a decorated function::
+
+    from plone.jsonapi import router
+
+    @router.add_route("/hello/<string:name>", "hello", methods=["GET"])
+    def hello(context, request, name="world"):
+        return {"hello": name}
+
+The passed in context and request gets passed of the ``@@API`` View.
+It can be used to query Plone tools or other utilities or adapters.
+
+
+A more complex Example
+~~~~~~~~~~~~~~~~~~~~~~
+
+In this Example, we're going to add a route provider named ``my_routes``.
+This route provider gets registered as an named Utility_.
+
 To do so, we add a module called ``routes.py`` to our package and add the
 following code::
 
@@ -106,7 +133,7 @@ following code::
             return {"hello": name}
 
 
-To register the utility, we add this directive to the ``configure.zcml`` file::
+To register the Utility_, we add this directive to the ``configure.zcml`` file::
 
     <!-- Extension point for custom routes -->
     <utility
@@ -152,15 +179,43 @@ Result::
     }
 
 
-Advanced configuration
-----------------------
+API URLs
+--------
 
-See the ``plone.jsonapi.routes`` module for advanced configuration.
-This module implements a simple RESTful API for Plone content type
-for the resource `contents`.
+If you design your custom RESTful JSON API, you probably want to insert URLs to
+your specified resources, e.g:
 
-It uses a special Plone_ catalog helper (``plone.jsonapi.catalog``) for
-searching content and building unique URLs using the UID of the found contents.
+http://localhost:8080/@@API/news/news_items_1
+
+The ``plone.jsonapi.router`` module comes with a ``url_for`` method.
+
+So when you want to insert the URL for the defined ``hello`` endpoint, you simply
+add it like this::
+
+    from plone.jsonapi import router
+
+    @router.add_route("/hello/<string:name>", "hello", methods=["GET"])
+    def hello(context, request, name="world"):
+        return {
+            "url": router.url_for("hello", values={"name": name}, force_external=True),
+            "hello": name,
+        }
+
+It builds the URLs using the ``build`` method of the MapAdapter of Werkzeug_.
+For details, see http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.build
+
+The resulting JSON will look like this::
+
+http://localhost:8080/@@API/hello/world
+
+Result::
+
+    {
+        url: "http://localhost:8080/Plone/@@API/hello/world",
+        runtime: 0.002997875213623047,
+        hello: "world"
+    }
+
 
 
 .. _Plone: http://plone.org
@@ -168,5 +223,6 @@ searching content and building unique URLs using the UID of the found contents.
 .. _Werkzeug: http://werkzeug.pocoo.org
 .. _plone.jsonapi: https://github.com/ramonski/plone.jsonapi
 .. _mr.developer: https://pypi.python.org/pypi/mr.developer
+.. _Utility: http://developer.plone.org/components/utilities.html
 
 .. vim: set ft=rst ts=4 sw=4 expandtab :
