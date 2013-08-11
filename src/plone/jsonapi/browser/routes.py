@@ -19,8 +19,8 @@ from helpers import success
 logger = logging.getLogger("plone.jsonapi.routes")
 
 __version__ = 0.2
-__build__ = 10
-__date__ = "2013-08-05"
+__build__ = 20
+__date__ = "2013-08-11"
 
 
 class PloneRoutes(object):

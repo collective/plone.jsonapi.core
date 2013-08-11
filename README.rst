@@ -21,6 +21,32 @@ Introduction
 This Package allows Users to expose content information via JSON.
 
 
+Motivation
+----------
+
+This project was born in 2012, out of the need for a data source to build a
+network based iOS application. Or more precise, I wanted to learn iOS
+programming and wanted to knit my own JSON API:)
+
+I know, it is a little bit awkward to provide an own routing mechanism for
+Plone which dipatches the request after the ``ZPublisher`` did its job, but it
+worked and thus, I did it.
+
+
+Limitations
+-----------
+
+Since the API comes after the ``ZPublisher``, it can only make use of ``HTTP
+GET`` and ``HTTP POST`` methods. The other methods will never reach the API
+View.
+
+Be aware that the API View comes with the permission ``zope2.View``, so you need
+to programmatically check for the correct permissions on your custom routes.
+
+See: http://developer.plone.org/security/permission_lists.html
+
+
+
 Compatibility
 -------------
 
@@ -216,6 +242,44 @@ Result::
         hello: "world"
     }
 
+
+Permissions
+-----------
+
+You have to handle the permissions for your routes manually.
+so if you would like to restrict the permission of the ``hello`` route,
+you have to do something like this::
+
+    from AccessControl import getSecurityManager
+    from AccessControl import Unauthorized
+
+    from plone.jsonapi import router
+
+    @router.add_route("/hello/<string:name>", "hello", methods=["GET"])
+    def hello(context, request, name="world"):
+
+        if not getSecurityManager().checkPermission("ViewHelloAPI", object):
+            raise Unauthorized("You don't have the 'ViewHelloAPI' permission")
+
+        return {
+            "url": router.url_for("hello", values={"name": name}, force_external=True),
+            "hello": name,
+        }
+
+Output::
+
+    {
+        runtime: 0.0021250247955322266,
+        success: false,
+        error: "You don't have the 'ViewHelloAPI' permission"
+    }
+
+
+
+License
+-------
+
+MIT - do what you want
 
 
 .. _Plone: http://plone.org
