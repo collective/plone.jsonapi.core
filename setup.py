@@ -8,11 +8,6 @@ version = '0.2'
 long_description = (
     open('README.rst').read()
     + '\n' +
-    'Contributors\n'
-    '============\n'
-    + '\n' +
-    open(os.path.join('docs', 'CONTRIBUTORS.rst')).read()
-    + '\n' +
     open(os.path.join('docs', 'HISTORY.rst')).read()
     + '\n')
 

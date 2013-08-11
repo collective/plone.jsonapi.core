@@ -230,7 +230,7 @@ add it like this::
 It builds the URLs using the ``build`` method of the MapAdapter of Werkzeug_.
 For details, see http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.build
 
-The resulting JSON will look like this::
+The resulting JSON will look like this:
 
 http://localhost:8080/@@API/hello/world
 
