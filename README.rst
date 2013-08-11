@@ -194,7 +194,7 @@ For details, see: http://werkzeug.pocoo.org/docs/routing/#rule-format
 
 To test this route, browse to the ``/hello`` API url:
 
-http://localhost:8080/@@API/hello/JSON%20Plone%20API
+http://localhost:8080/Plone/@@API/hello/JSON%20Plone%20API
 
 
 Result::
@@ -211,7 +211,7 @@ API URLs
 If you design your custom RESTful JSON API, you probably want to insert URLs to
 your specified resources, e.g:
 
-http://localhost:8080/@@API/news/news_items_1
+http://localhost:8080/Plone/@@API/news/news_items_1
 
 The ``plone.jsonapi.router`` module comes with a ``url_for`` method.
 
@@ -232,7 +232,7 @@ For details, see http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAda
 
 The resulting JSON will look like this:
 
-http://localhost:8080/@@API/hello/world
+http://localhost:8080/Plone/@@API/hello/world
 
 Result::
 
