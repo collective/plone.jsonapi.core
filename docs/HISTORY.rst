@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.3 - unreleased
+----------------
+
+- changed the `url_for` method of the router to provide correct urls for
+  virtual hosting.
+
 
 0.2 - 2013-08-11
 ----------------

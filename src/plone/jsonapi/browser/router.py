@@ -103,10 +103,23 @@ class Router(object):
         (values=None, method=None, force_external=False, append_unknown=True)
         see: http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.build
         """
-        # XXX: this is hacky - we need to retain the API base url to create correct links.
-        path_info = self.environ["PATH_INFO"]
-        base, _, _ = path_info.partition("API")
-        adapter = self.get_adapter(script_name=base + "API")
+
+        # XXX: this is all a little bit hacky, especially when it comes to virtual hosting.
+
+        url = self.request.getURL()
+        spp = self.request.physicalPathFromURL(url)
+
+        # find the API view root
+        path = []
+        for el in spp:
+            path.append(el)
+            if el == "API" or el == "@@API":
+                break
+
+        virt_path = self.request.physicalPathToVirtualPath(path)
+        script_name = self.request.physicalPathToURL(virt_path, relative=1)
+
+        adapter = self.get_adapter(script_name=script_name)
         return adapter.build(endpoint, **options)
 
     def __call__(self, context, request, path):

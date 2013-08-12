@@ -109,7 +109,7 @@ The Router is responsible to manage and maintain API routes to endpoints.
 
 Routes get defined by so called "Route Providers".
 
-A route provider is either a named Utility class, wich implements the
+A route provider is either a named Utility class, which implements the
 ``IRouteProvider`` interface, or simply a function, which is registered
 via the ``add_route`` decorator.
 
