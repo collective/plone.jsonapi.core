@@ -2,7 +2,7 @@ plone.jsonapi
 =============
 
 :Author: Ramon Bartl
-:Version: 0.2
+:Version: 0.3dev
 
 
 .. contents:: Table of Contents
