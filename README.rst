@@ -155,7 +155,7 @@ following code::
                 ("/hello/<string:name>", "hello", self.json_hello, dict(methods=['GET'])),
             )
 
-        def json_hello(self, name="world"):
+        def json_hello(self, context, request, name="world"):
             return {"hello": name}
 
 
