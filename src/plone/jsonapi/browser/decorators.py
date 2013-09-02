@@ -6,8 +6,11 @@ __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
 import time
+import logging
 import simplejson as json
 from helpers import error
+
+logger = logging.getLogger("plone.jsonapi")
 
 
 def handle_errors(f):
