@@ -12,7 +12,7 @@
       permission="zope2.View"
       allowed_interface=".interfaces.IAPI" />
 
-    <!-- the default router -->
+    <!-- The default router -->
     <utility
         name="default"
         provides=".interfaces.IRouter"

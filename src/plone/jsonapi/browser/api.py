@@ -35,7 +35,6 @@ class API(BrowserView):
 
         self.traverse_subpath = []
 
-
     def publishTraverse(self, request, name):
         """ get's called before __call__ for each path name
         """
