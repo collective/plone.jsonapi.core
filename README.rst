@@ -86,15 +86,6 @@ After installation, the API View is available as a Browser View on your Plone
 site with the name ``@@API``, for example ``http://localhost:8080/Plone/@@API``.
 
 
-Quickstart
-----------
-
-The framework comes with a default implementation for Plone content types.
-The resource name is ``contents`` and can be accessed here:
-
-http://localhost:8080/Plone/@@API/contents
-
-
 API Framework
 -------------
 

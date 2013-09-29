@@ -14,7 +14,10 @@ from interfaces import IRouteProvider
 
 logger = logging.getLogger("plone.jsonapi.router")
 
+
 class Router(object):
+    """ API Router
+    """
 
     def __init__(self):
         logger.info("DefaultRouter::__init__")
