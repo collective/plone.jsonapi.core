@@ -8,6 +8,7 @@ __docformat__ = 'plaintext'
 import pkg_resources
 
 from browser import router
+from browser import decorators
 
 
 def version():
