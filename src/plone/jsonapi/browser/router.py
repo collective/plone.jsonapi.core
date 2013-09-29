@@ -30,10 +30,14 @@ class Router(object):
     def initialize(self, context, request):
         """ called by the API Framework
         """
+        logger.info("DefaultRouter.initialize: context=%r request=%r" % (context, request))
+
         self.context = context
         self.request = request
+
         self.environ = request.environ
         self.http_host = request["HTTP_HOST"]
+        self.url = request.getURL()
 
         if self.is_initialized:
             return
@@ -109,8 +113,7 @@ class Router(object):
 
         # XXX: this is all a little bit hacky, especially when it comes to virtual hosting.
 
-        url = self.request.getURL()
-        spp = self.request.physicalPathFromURL(url)
+        spp = self.request.physicalPathFromURL(self.url)
 
         # find the API view root
         path = []
