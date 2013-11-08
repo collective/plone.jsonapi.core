@@ -11,7 +11,7 @@ long_description = (
     open(os.path.join('docs', 'HISTORY.rst')).read()
     + '\n')
 
-setup(name='plone.jsonapi',
+setup(name='plone.jsonapi.core',
       version=version,
       description="Plone JSON API",
       long_description=long_description,
@@ -29,7 +29,7 @@ setup(name='plone.jsonapi',
       license='MIT',
       packages=find_packages('src'),
       package_dir = {'': 'src'},
-      namespace_packages=['plone'],
+      namespace_packages=['plone', 'plone.jsonapi'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[

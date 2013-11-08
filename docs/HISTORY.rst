@@ -4,6 +4,8 @@ Changelog
 0.3 - unreleased
 ----------------
 
+- renamed package to `plone.jsonapi.core` due to namespace conflicts with
+  `plone.jsonapi.routes`
 - removed default plone route configuration.
 - added `version` route
 - changed the `url_for` method of the router to provide correct urls for
