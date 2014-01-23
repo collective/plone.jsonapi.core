@@ -5,6 +5,7 @@
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
+
 def error(message, **kw):
     result = {"success": False, "error": message}
     if kw:

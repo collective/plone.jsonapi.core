@@ -26,28 +26,6 @@ class IRouter(interface.Interface):
         """
 
 
-class ICatalog(interface.Interface):
-    """ The API catalog utility
-    """
-
-    def search(self, query):
-        """ gets a query and has to return a dictionary
-        """
-
-
-class IURL(interface.Interface):
-    """ The API URL utility
-    """
-
-    def get_api_url(self, brain):
-        """ returns the api_url as string
-        """
-
-    def get_urls(self, brain):
-        """ returns a dict of api urls for the given brain
-        """
-
-
 class IRouteProvider(interface.Interface):
     """ utlitiy which provides an api route
     """
@@ -59,15 +37,6 @@ class IRouteProvider(interface.Interface):
     def routes(self):
         """ needs to return a tuple of tuples containing
             rule, endpoint, view_func and additional options
-        """
-
-
-class IInfo(interface.Interface):
-    """ Info Interface
-    """
-
-    def __call__():
-        """ needs to return a dictionary here
         """
 
 # vim: set ft=python ts=4 sw=4 expandtab :

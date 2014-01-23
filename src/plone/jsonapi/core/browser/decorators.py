@@ -6,8 +6,11 @@ __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
 import time
+import logging
 import simplejson as json
 from helpers import error
+
+logger = logging.getLogger("plone.jsonapi")
 
 
 def handle_errors(f):
@@ -31,7 +34,7 @@ def runtime(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        result.update(dict(runtime=end-start))
+        result.update(dict(_runtime=end-start))
         return result
 
     return decorator

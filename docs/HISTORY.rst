@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.3 - 2014-01-23
+----------------
+
+- renamed package to `plone.jsonapi.core` due to namespace conflicts with
+  `plone.jsonapi.routes`
+- removed default plone route configuration.
+- added `version` route
+- changed the `url_for` method of the router to provide correct urls for
+  virtual hosting.
+
 
 0.2 - 2013-08-11
 ----------------

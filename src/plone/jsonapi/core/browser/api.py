@@ -35,7 +35,6 @@ class API(BrowserView):
 
         self.traverse_subpath = []
 
-
     def publishTraverse(self, request, name):
         """ get's called before __call__ for each path name
         """
@@ -47,9 +46,11 @@ class API(BrowserView):
         """ dispatches the given subpath to the router
         """
         path = "/".join(self.traverse_subpath)
+        logger.info("Dispatching path: '%s'", path)
         for name, router in component.getUtilitiesFor(IRouter):
             router.initialize(self.context, self.request)
             if router.match(self.context, self.request, path):
+                logger.info("Router '%r' will handle the request", router)
                 return router(self.context, self.request, path)
 
     @returns_json
