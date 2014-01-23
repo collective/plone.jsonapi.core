@@ -2,7 +2,7 @@ plone.jsonapi.core
 ==================
 
 :Author: Ramon Bartl
-:Version: 0.3dev
+:Version: 0.3
 
 
 .. contents:: Table of Contents
@@ -51,26 +51,19 @@ Compatibility
 -------------
 
 The plone.jsonapi.core_ should work with Plone_ 3 and 4.
-It should also work with Dexterity_ content types.
 
 
 Installation
 ------------
 
-There is currently no "official" release on pypi, so you have to use
-`mr.developer` to include plone.jsonapi.core_ to your buildout config.
+There official release is on pypi, so you have to simply include
+plone.jsonapi.core_ to your buildout config.
 
 Example::
 
     [buildout]
 
-    extensions =
-        mr.developer
-
-    auto-checkout = *
-
-    [sources]
-    plone.jsonapi.core = git https://github.com/ramonski/plone.jsonapi.core.git branch=develop
+    ...
 
     [instance]
     ...

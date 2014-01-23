@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3 - unreleased
+0.3 - 2014-01-23
 ----------------
 
 - renamed package to `plone.jsonapi.core` due to namespace conflicts with
