@@ -1,2 +1,4 @@
 global-include .py .zcml .txt .rst
-
+recursive-include src *
+recursive-include docs *
+global-exclude *pyc

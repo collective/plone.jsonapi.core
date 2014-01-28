@@ -8,7 +8,7 @@ version = '0.4dev'
 long_description = (
     open('README.rst').read()
     + '\n' +
-    open(os.path.join('src', 'plone', 'jsonapi', 'core', 'docs' 'Readme.txt')).read()
+    open(os.path.join('src', 'plone', 'jsonapi', 'core', 'docs', 'Readme.txt')).read()
     + '\n' +
     open(os.path.join('docs', 'HISTORY.rst')).read()
     + '\n')
@@ -36,8 +36,8 @@ setup(name='plone.jsonapi.core',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'simplejson==2.5.2',
-          'werkzeug==0.9.3',
+          'werkzeug',
+          'simplejson',
           # -*- Extra requirements: -*-
       ],
       extras_require={
