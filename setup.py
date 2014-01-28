@@ -8,6 +8,8 @@ version = '0.4dev'
 long_description = (
     open('README.rst').read()
     + '\n' +
+    open(os.path.join('src', 'plone', 'jsonapi', 'core', 'docs' 'Readme.txt')).read()
+    + '\n' +
     open(os.path.join('docs', 'HISTORY.rst')).read()
     + '\n')
 
