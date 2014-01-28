@@ -4,6 +4,8 @@ plone.jsonapi.core
 :Author: Ramon Bartl
 :Version: 0.4dev
 
+[![Build Status](https://travis-ci.org/ramonski/plone.jsonapi.core.png)](https://travis-ci.org/ramonski/plone.jsonapi.core)
+[![Coverage Status](https://raw.github.com/gittip/shields.io/master/static/coveralls/coveralls_100.png)](https://coveralls.io/r/ramonski/plone.jsonapi.core?branch=develop)
 
 .. contents:: Table of Contents
    :depth: 2
