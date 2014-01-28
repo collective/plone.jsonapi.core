@@ -4,7 +4,9 @@ plone.jsonapi.core
 :Author: Ramon Bartl
 :Version: 0.4dev
 
-[![Build Status](https://travis-ci.org/ramonski/plone.jsonapi.core.png)](https://travis-ci.org/ramonski/plone.jsonapi.core)
+.. image:: https://secure.travis-ci.org/ramonski/plone.jsonapi.core.png?branch=develop
+    :target: https://travis-ci.org/ramonski/plone.jsonapi.core
+    :alt: Build Status
 
 .. contents:: Table of Contents
    :depth: 2
