@@ -7,17 +7,13 @@ __docformat__ = 'plaintext'
 
 
 def error(message, **kw):
-    result = {"success": False, "error": message}
-    if kw:
-        result.update(kw)
+    result = {"success": False, "message": message}
+    result.update(kw)
     return result
 
 def success(message, **kw):
-    result = {"success": True,
-            "message": message}
-    if kw:
-        result.update(kw)
-
+    result = {"success": True, "message": message}
+    result.update(kw)
     return result
 
 # vim: set ft=python ts=4 sw=4 expandtab :

@@ -47,7 +47,6 @@ Check what happenss when a route throws an Error::
 
     >>> browser.open(api_url + "/fail")
     >>> browser.contents
-    '{"_runtime": ..., "success": false, "error": "This failed badly"}'
-
+    '{"_runtime": ..., "message": "This failed badly", "success": false, "error": "Traceback (most recent call last):..."}'
 
 .. vim: set ft=rst ts=4 sw=4 expandtab :

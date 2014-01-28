@@ -41,7 +41,6 @@ class API(BrowserView):
         self.traverse_subpath.append(name)
         return self
 
-    @handle_errors
     def dispatch(self):
         """ dispatches the given subpath to the router
         """
@@ -55,9 +54,13 @@ class API(BrowserView):
 
     @returns_json
     @runtime
+    @handle_errors
+    def render(self):
+        return self.dispatch()
+
     def __call__(self):
         """ render json on __call__
         """
-        return self.dispatch()
+        return self.render()
 
 # vim: set ft=python ts=4 sw=4 expandtab :

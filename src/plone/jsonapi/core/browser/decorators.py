@@ -7,8 +7,8 @@ __docformat__ = 'plaintext'
 
 import time
 import logging
-import simplejson as json
 import traceback
+import simplejson as json
 from helpers import error
 
 logger = logging.getLogger("plone.jsonapi")
@@ -22,9 +22,8 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         # XXX we should create a custom Exception class
-        except Exception:
-            tb = traceback.format_exc()
-            return error(str(tb))
+        except Exception, e:
+            return error(str(e), error=str(traceback.format_exc()))
     return decorator
 
 
