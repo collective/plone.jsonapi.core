@@ -11,7 +11,7 @@ plone.jsonapi.core
 Latest Build Status
 -------------------
 
-.. image:: https://secure.travis-ci.org/ramonski/plone.jsonapi.core.png?branch=develop
+.. image:: https://api.travis-ci.org/ramonski/plone.jsonapi.core.png?branch=develop
     :target: https://travis-ci.org/ramonski/plone.jsonapi.core
     :alt: Build Status
 
