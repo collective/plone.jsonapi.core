@@ -3,8 +3,6 @@ plone.jsonapi.core
 
 :Author: Ramon Bartl
 :Version: 0.4dev
-:Status: image:: https://secure.travis-ci.org/ramonski/plone.jsonapi.core.png?branch=develop
-
 
 .. contents:: Table of Contents
    :depth: 2
