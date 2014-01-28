@@ -97,7 +97,7 @@ class Router(object):
         (path_info=None, method=None, return_rule=False, query_args=None)
         see: http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.match
         """
-        method = request.method
+        method = request.environ.get("REQUEST_METHOD", "GET")
         logger.info("router.match: method=%s" % method)
         adapter = self.get_adapter(path_info=path)
         endpoint, values = adapter.match(method=method)
