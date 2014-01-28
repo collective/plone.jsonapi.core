@@ -38,6 +38,12 @@ setup(name='plone.jsonapi.core',
           'werkzeug==0.9.3',
           # -*- Extra requirements: -*-
       ],
+      extras_require={
+          'test': [
+               'plone.app.testing',
+               'unittest2',
+           ]
+      },
       entry_points="""
       # -*- Entry points: -*-
       [z3c.autoinclude.plugin]

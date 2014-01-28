@@ -4,7 +4,9 @@ Changelog
 0.4 - unreleased
 ----------------
 
-- no changes yet
+- https://github.com/ramonski/plone.jsonapi.core/issues/7
+  started with doctests
+
 
 0.3 - 2014-01-23
 ----------------
