@@ -1,5 +1,13 @@
-Integration Tests
------------------
+Plone JSONAPI Integration Tests
+===============================
+
+With `plone.jsonapi.core` enabled, it is simple to expose functions within
+Plone. You only have to wrap your function around the `@router.add_route`
+decorator.
+
+The following doctest will demonstrate how the framework works and how to
+register new routes.
+
 
 Some needed imports::
 
