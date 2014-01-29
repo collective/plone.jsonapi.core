@@ -1,16 +1,8 @@
 language: python
 python:
-  - 2.4
   - 2.7
 env:
-  - PLONE_VERSION=3.3
   - PLONE_VERSION=4.3
-matrix:
-  exclude:
-    - python: 2.4
-      env: PLONE_VERSION=4.3
-    - python: 2.7
-      env: PLONE_VERSION=3.3
 install:
   - sed -ie "s#test-plone-4.x.cfg#test-plone-$PLONE_VERSION.x.cfg#" travis.cfg
   - mkdir -p buildout-cache/downloads
