@@ -53,11 +53,26 @@ to programmatically check for the correct permissions on your custom routes.
 See: http://developer.plone.org/security/permission_lists.html
 
 
-
 Compatibility
 -------------
 
 The plone.jsonapi.core_ should work with Plone_ 3 and 4.
+
+.. note:: Users of Plone_ 3 should pin the versions of simplejson_ and Werkzeug_.
+
+Example::
+
+    [buildout]
+
+    ...
+
+    version = versions
+
+    ...
+
+    [versions]
+    simplejson = 2.0.9
+    werkzeug = 0.7.2
 
 
 Installation
@@ -277,6 +292,7 @@ MIT - do what you want
 .. _Plone: http://plone.org
 .. _Dexterity: https://pypi.python.org/pypi/plone.dexterity
 .. _Werkzeug: http://werkzeug.pocoo.org
+.. _simplejson: https://pypi.python.org/pypi/simplejson
 .. _plone.jsonapi.core: https://github.com/ramonski/plone.jsonapi.core
 .. _mr.developer: https://pypi.python.org/pypi/mr.developer
 .. _Utility: http://developer.plone.org/components/utilities.html

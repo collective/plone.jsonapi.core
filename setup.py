@@ -36,8 +36,8 @@ setup(name='plone.jsonapi.core',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'werkzeug==0.8.3',
-          'simplejson==2.5.2',
+          'werkzeug>=0.7.2',
+          'simplejson>=2.0.9',
           # -*- Extra requirements: -*-
       ],
       extras_require={
