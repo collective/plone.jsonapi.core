@@ -63,14 +63,11 @@ The plone.jsonapi.core_ should work with Plone_ 3 and 4.
 Example::
 
     [buildout]
-
     ...
-
-    version = versions
-
-    ...
+    versions = versions
 
     [versions]
+    ...
     simplejson = 2.0.9
     werkzeug = 0.7.2
 
@@ -84,7 +81,6 @@ plone.jsonapi.core_ to your buildout config.
 Example::
 
     [buildout]
-
     ...
 
     [instance]
