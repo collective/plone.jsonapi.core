@@ -37,7 +37,7 @@ Check if the version URL returns the right version::
     >>> dct["version"] == version()
     True
 
-Testing the framework -- lets add a new route::
+Testing the framework -- lets add a new GET route::
 
     >>> @router.add_route("/hello/<string:name>", "hello", methods=["GET"])
     ... def hello(context, request, name="world"):
@@ -46,6 +46,18 @@ Testing the framework -- lets add a new route::
     >>> browser.open(api_url + "/hello/world")
     >>> browser.contents
     '{"_runtime": ..., "hello": "world"}'
+
+
+Testing the framework -- lets add a new POST route::
+
+    >>> @router.add_route("/hello", "hello_post", methods=["POST"])
+    ... def hello_post(context, request):
+    ...     return {"hello": "post"}
+
+    >>> browser.post(api_url + "/hello", "")
+    >>> browser.contents
+    '{"_runtime": ..., "hello": "post"}'
+
 
 Check what happenss when a route throws an Error::
 
