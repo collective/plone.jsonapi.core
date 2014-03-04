@@ -3,10 +3,12 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.3'
+version = '0.4'
 
 long_description = (
     open('README.rst').read()
+    + '\n' +
+    open(os.path.join('src', 'plone', 'jsonapi', 'core', 'docs', 'Readme.txt')).read()
     + '\n' +
     open(os.path.join('docs', 'HISTORY.rst')).read()
     + '\n')
@@ -34,10 +36,16 @@ setup(name='plone.jsonapi.core',
       zip_safe=False,
       install_requires=[
           'setuptools',
-          'simplejson==2.5.2',
-          'werkzeug==0.9.3',
+          'werkzeug>=0.7.2',
+          'simplejson>=2.0.9',
           # -*- Extra requirements: -*-
       ],
+      extras_require={
+          'test': [
+               'plone.app.testing',
+               'unittest2',
+           ]
+      },
       entry_points="""
       # -*- Entry points: -*-
       [z3c.autoinclude.plugin]

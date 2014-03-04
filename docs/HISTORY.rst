@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.4 - 2014-03-04
+----------------
+
+- https://github.com/ramonski/plone.jsonapi.core/issues/10
+  add the traceback to the response when an error occurs
+- https://github.com/ramonski/plone.jsonapi.core/issues/7
+  started with doctests
+
+
 0.3 - 2014-01-23
 ----------------
 
