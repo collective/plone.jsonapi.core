@@ -7,6 +7,8 @@ __docformat__ = 'plaintext'
 
 import logging
 
+import urlparse
+
 from zope import component
 from werkzeug.routing import Map, Rule
 
@@ -36,7 +38,7 @@ class Router(object):
         self.request = request
 
         self.environ = request.environ
-        self.http_host = request["HTTP_HOST"]
+        self.http_host = self.get_hostname()
         self.url = request.getURL()
 
         if self.is_initialized:
@@ -127,6 +129,22 @@ class Router(object):
 
         adapter = self.get_adapter(script_name=script_name)
         return adapter.build(endpoint, **options)
+
+    def get_hostname(self):
+        """ Extract hostname in virtual-host-safe manner
+
+        @return: Host DNS name, as requested by client. Lowercased, with port part.
+                 Return None if host name is not present in HTTP request headers
+                 (e.g. unit testing).
+        """
+
+        if "ACTUAL_URL" in self.request:
+            url = self.request["ACTUAL_URL"]
+            host = urlparse.urlsplit(url)[1]
+        else:
+            return None
+
+        return host
 
     def __call__(self, context, request, path):
         """ calls the matching view function for the given path
