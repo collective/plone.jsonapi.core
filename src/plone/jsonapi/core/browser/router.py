@@ -6,6 +6,7 @@ __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
 import logging
+from urlparse import urlsplit
 
 from zope import component
 from werkzeug.routing import Map, Rule
@@ -36,7 +37,7 @@ class Router(object):
         self.request = request
 
         self.environ = request.environ
-        self.http_host = request["HTTP_HOST"]
+        self.http_host = urlsplit(request["ACTUAL_URL"]).netloc
         self.url = request.getURL()
 
         if self.is_initialized:
