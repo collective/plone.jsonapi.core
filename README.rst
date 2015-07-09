@@ -292,5 +292,3 @@ MIT - do what you want
 .. _plone.jsonapi.core: https://github.com/ramonski/plone.jsonapi.core
 .. _mr.developer: https://pypi.python.org/pypi/mr.developer
 .. _Utility: http://developer.plone.org/components/utilities.html
-
-.. vim: set ft=rst ts=4 sw=4 expandtab :
