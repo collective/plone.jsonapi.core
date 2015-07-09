@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-#
-# File: interfaces.py
+
+from zope import interface
 
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
-
-from zope import interface
 
 
 class IAPI(interface.Interface):
@@ -38,5 +36,3 @@ class IRouteProvider(interface.Interface):
         """ needs to return a tuple of tuples containing
             rule, endpoint, view_func and additional options
         """
-
-# vim: set ft=python ts=4 sw=4 expandtab :

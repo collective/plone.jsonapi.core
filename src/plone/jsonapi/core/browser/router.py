@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#
-# File: router.py
-
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
 
 import logging
 
@@ -11,6 +6,9 @@ from zope import component
 from werkzeug.routing import Map, Rule
 
 from interfaces import IRouteProvider
+
+__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
+__docformat__ = 'plaintext'
 
 logger = logging.getLogger("plone.jsonapi.router")
 
@@ -163,6 +161,7 @@ def add_route(rule, endpoint=None, **kw):
         return f
     return wrapper
 
+
 def url_for(endpoint, **options):
     """ method to retrieve the API URL of an endpoint
 
@@ -172,5 +171,3 @@ def url_for(endpoint, **options):
     >>> router.url_for("hello", values={"name": "jsonapi"}, force_external=True)
     """
     return DefaultRouter.url_for(endpoint, **options)
-
-# vim: set ft=python ts=4 sw=4 expandtab :

@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#
-# File: api.py
-
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
 
 import logging
 
@@ -20,6 +15,10 @@ from decorators import handle_errors
 
 from interfaces import IAPI
 from interfaces import IRouter
+
+__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
+__docformat__ = 'plaintext'
+
 
 logger = logging.getLogger("plone.jsonapi")
 
@@ -62,5 +61,3 @@ class API(BrowserView):
         """ render json on __call__
         """
         return self.render()
-
-# vim: set ft=python ts=4 sw=4 expandtab :
