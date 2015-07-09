@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-0.5 - unreleased
+0.5 - 2015-07-09
 ----------------
 
 - no changes yet
