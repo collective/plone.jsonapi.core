@@ -20,7 +20,7 @@ __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
 
-logger = logging.getLogger("plone.jsonapi")
+logger = logging.getLogger("plone.jsonapi.core.api")
 
 
 class API(BrowserView):

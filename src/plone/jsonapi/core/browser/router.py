@@ -10,7 +10,7 @@ from interfaces import IRouteProvider
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
 
-logger = logging.getLogger("plone.jsonapi.router")
+logger = logging.getLogger("plone.jsonapi.core.router")
 
 
 class Router(object):
