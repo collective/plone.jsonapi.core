@@ -10,8 +10,7 @@ class TestSetup(APITestCase):
     """
 
     def test_version(self):
-        endpoint = "version"
-        self.assertEqual(router.url_for(endpoint), "/plone/@@API/%s" % endpoint)
+        self.assertEqual(router.url_for("apiversion"), "/plone/@@API/version")
 
 
 def test_suite():
