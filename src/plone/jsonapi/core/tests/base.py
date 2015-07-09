@@ -43,7 +43,7 @@ class TestLayer(PloneSandboxLayer):
 
 TEST_FIXTURE = TestLayer()
 INTEGRATION_TESTING = IntegrationTesting(bases=(TEST_FIXTURE,),
-                          name="plone.jsonapi.routes:Integration")
+                          name="plone.jsonapi.core:Integration")
 
 
 class APITestCase(unittest.TestCase):

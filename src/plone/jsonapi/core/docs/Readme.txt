@@ -21,16 +21,14 @@ Prepare the browser::
 
 Remember some URLs::
 
-    >>> portal_url = self.portal.absolute_url()
+    >>> portal = self.getPortal()
+    >>> portal_url = portal.absolute_url()
     >>> api_url = portal_url + "/@@API"
     >>> version_url = api_url + "/version"
 
 Check if the version URL returns the right version::
 
     >>> browser.open(version_url)
-    >>> browser.contents
-    '{"url": "...", "_runtime": ..., "version": "..."}'
-
     >>> dct = json.loads(browser.contents)
     >>> dct["url"] == version_url
     True
