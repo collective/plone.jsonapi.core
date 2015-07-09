@@ -2,7 +2,7 @@ plone.jsonapi.core
 ==================
 
 :Author:  Ramon Bartl
-:Version: 0.5
+:Version: 0.6
 
 .. contents:: Table of Contents
    :depth: 2
