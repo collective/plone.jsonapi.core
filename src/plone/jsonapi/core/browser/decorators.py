@@ -1,17 +1,12 @@
 # -*- coding: utf-8 -*-
-#
-# File: decorators.py
-
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
 
 import time
-import logging
 import traceback
 import simplejson as json
 from helpers import error
 
-logger = logging.getLogger("plone.jsonapi")
+__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
+__docformat__ = 'plaintext'
 
 
 def handle_errors(f):
@@ -69,5 +64,3 @@ def supports_jsonp(func):
         return func(*args, **kwargs)
 
     return decorator
-
-# vim: set ft=python ts=4 sw=4 expandtab :

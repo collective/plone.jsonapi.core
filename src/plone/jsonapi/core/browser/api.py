@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-#
-# File: api.py
-
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
 
 import logging
 
@@ -21,7 +16,11 @@ from decorators import handle_errors
 from interfaces import IAPI
 from interfaces import IRouter
 
-logger = logging.getLogger("plone.jsonapi")
+__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
+__docformat__ = 'plaintext'
+
+
+logger = logging.getLogger("plone.jsonapi.core.api")
 
 
 class API(BrowserView):
@@ -45,11 +44,12 @@ class API(BrowserView):
         """ dispatches the given subpath to the router
         """
         path = "/".join(self.traverse_subpath)
-        logger.info("Dispatching path: '%s'", path)
+        logger.debug("Dispatching path: '%s'", path)
         for name, router in component.getUtilitiesFor(IRouter):
             router.initialize(self.context, self.request)
+            # The first router which is able to match the route wins.
             if router.match(self.context, self.request, path):
-                logger.info("Router '%r' will handle the request", router)
+                logger.debug("Router '%r' will handle the request", router)
                 return router(self.context, self.request, path)
 
     @returns_json
@@ -62,5 +62,3 @@ class API(BrowserView):
         """ render json on __call__
         """
         return self.render()
-
-# vim: set ft=python ts=4 sw=4 expandtab :

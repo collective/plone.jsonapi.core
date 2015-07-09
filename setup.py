@@ -3,7 +3,7 @@
 import os
 from setuptools import setup, find_packages
 
-version = '0.5dev'
+version = '0.5'
 
 long_description = (
     open('README.rst').read()
@@ -52,5 +52,3 @@ setup(name='plone.jsonapi.core',
       target = plone
       """,
       )
-
-# vim: set ft=python ts=4 sw=4 expandtab :

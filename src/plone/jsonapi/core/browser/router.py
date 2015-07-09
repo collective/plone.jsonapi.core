@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
-#
-# File: router.py
-
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
 
 import logging
+from urlparse import urlsplit
 
 from zope import component
 from werkzeug.routing import Map, Rule
 
 from interfaces import IRouteProvider
 
-logger = logging.getLogger("plone.jsonapi.router")
+__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
+__docformat__ = 'plaintext'
+
+logger = logging.getLogger("plone.jsonapi.core.router")
 
 
 class Router(object):
@@ -20,7 +19,7 @@ class Router(object):
     """
 
     def __init__(self):
-        logger.info("DefaultRouter::__init__")
+        logger.debug("DefaultRouter::__init__")
         self.rule_class = Rule
         self.view_functions = {}
         self.url_map = Map()
@@ -30,21 +29,21 @@ class Router(object):
     def initialize(self, context, request):
         """ called by the API Framework
         """
-        logger.info("DefaultRouter.initialize: context=%r request=%r" % (context, request))
+        logger.debug("DefaultRouter.initialize: context=%r request=%r" % (context, request))
 
         self.context = context
         self.request = request
 
         self.environ = request.environ
-        self.http_host = request["HTTP_HOST"]
+        self.http_host = urlsplit(request.get("ACTUAL_URL", "")).netloc
         self.url = request.getURL()
 
         if self.is_initialized:
             return
 
-        logger.info("DefaultRouter::initialize")
+        logger.debug("DefaultRouter::initialize")
         for name, provider in component.getUtilitiesFor(IRouteProvider):
-            logger.info("DefaultRouter::initialize: name=%s, provider=%r", name, provider)
+            logger.debug("DefaultRouter::initialize: name=%s, provider=%r", name, provider)
 
             if getattr(provider, "initialize", None):
                 provider.initialize(context, request)
@@ -63,7 +62,7 @@ class Router(object):
         :param endpoint:  The endpoint for this rule. This can be anything
         :param options:   additional options to be passed to the router
         """
-        logger.info("DefaultRouter.add_url_rule: %s (%s) -> %r options: %r", rule, endpoint, view_func.func_name, options)
+        logger.debug("DefaultRouter.add_url_rule: %s (%s) -> %r options: %r", rule, endpoint, view_func.func_name, options)
         if endpoint is None:
             endpoint = view_func.__name__
 
@@ -98,7 +97,7 @@ class Router(object):
         see: http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.match
         """
         method = request.environ.get("REQUEST_METHOD", "GET")
-        logger.info("router.match: method=%s" % method)
+        logger.debug("router.match: method=%s" % method)
         adapter = self.get_adapter(path_info=path)
         endpoint, values = adapter.match(method=method)
         return endpoint, values
@@ -131,7 +130,7 @@ class Router(object):
     def __call__(self, context, request, path):
         """ calls the matching view function for the given path
         """
-        logger.info("router.__call__: path=%s" % path)
+        logger.debug("router.__call__: path=%s" % path)
 
         endpoint, values = self.match(context, request, path)
         return self.view_functions[endpoint](context, request, **values)
@@ -140,7 +139,7 @@ class Router(object):
 DefaultRouter = Router()
 
 def DefaultRouterFactory():
-    logger.info("DefaultRouterFactory")
+    logger.debug("DefaultRouterFactory")
     return DefaultRouter
 
 
@@ -163,6 +162,7 @@ def add_route(rule, endpoint=None, **kw):
         return f
     return wrapper
 
+
 def url_for(endpoint, **options):
     """ method to retrieve the API URL of an endpoint
 
@@ -172,5 +172,3 @@ def url_for(endpoint, **options):
     >>> router.url_for("hello", values={"name": "jsonapi"}, force_external=True)
     """
     return DefaultRouter.url_for(endpoint, **options)
-
-# vim: set ft=python ts=4 sw=4 expandtab :
