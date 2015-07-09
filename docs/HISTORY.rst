@@ -5,7 +5,14 @@ Changelog
 0.5 - 2015-07-09
 ----------------
 
-- no changes yet
+- https://github.com/collective/plone.jsonapi.core/pull/14
+  use ``urlsplit(request.get("ACTUAL_URL", "")).netloc`` to get the hostname
+
+- added more tests
+
+- changed info to debug logging to reduce verbosity
+
+- smoe minor code cleanup
 
 
 0.4 - 2014-03-04

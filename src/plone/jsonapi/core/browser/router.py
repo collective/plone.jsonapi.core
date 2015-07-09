@@ -35,7 +35,7 @@ class Router(object):
         self.request = request
 
         self.environ = request.environ
-        self.http_host = urlsplit(request["ACTUAL_URL"]).netloc
+        self.http_host = urlsplit(request.get("ACTUAL_URL", "")).netloc
         self.url = request.getURL()
 
         if self.is_initialized:

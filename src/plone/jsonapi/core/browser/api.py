@@ -47,6 +47,7 @@ class API(BrowserView):
         logger.debug("Dispatching path: '%s'", path)
         for name, router in component.getUtilitiesFor(IRouter):
             router.initialize(self.context, self.request)
+            # The first router which is able to match the route wins.
             if router.match(self.context, self.request, path):
                 logger.debug("Router '%r' will handle the request", router)
                 return router(self.context, self.request, path)
