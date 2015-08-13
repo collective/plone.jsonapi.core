@@ -1,13 +1,26 @@
 language: python
-python:
-  - 2.7
+python: 2.7
+sudo: false
+cache:
+  directories:
+  - eggs
+  - parts/node
 env:
-  - PLONE_VERSION=4.3
+- PLONE_VERSION=4.3
+- PLONE_VERSION=5.0
+matrix:
+  fast_finish: true
 install:
-  - sed -ie "s#test-plone-4.x.cfg#test-plone-$PLONE_VERSION.x.cfg#" travis.cfg
-  - mkdir -p buildout-cache/eggs
-  - mkdir -p buildout-cache/downloads
-  - virtualenv --no-site-packages --no-setuptools .
-  - python bootstrap-buildout.py --setuptools-version=8.3 -c travis.cfg
-  - bin/buildout -N -t 3 -c travis.cfg
-script: bin/test
+- sed -ie "s#test-4.3#test-$PLONE_VERSION#" buildout.cfg
+- python bootstrap.py
+- bin/buildout annotate
+- bin/buildout -Nq
+script:
+- bin/code-analysis
+- bin/test
+after_success:
+- bin/createcoverage
+- pip install -q coveralls
+- coveralls
+notifications:
+  irc: irc.freenode.org#plone-testing
