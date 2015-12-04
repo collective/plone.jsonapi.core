@@ -261,7 +261,7 @@ you have to do something like this::
     @router.add_route("/hello/<string:name>", "hello", methods=["GET"])
     def hello(context, request, name="world"):
 
-        if not getSecurityManager().checkPermission("ViewHelloAPI", object):
+        if not getSecurityManager().checkPermission("ViewHelloAPI", context):
             raise Unauthorized("You don't have the 'ViewHelloAPI' permission")
 
         return {
