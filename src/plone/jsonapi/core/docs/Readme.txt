@@ -66,3 +66,23 @@ Check what happenss when a route throws an Error::
     >>> browser.open(api_url + "/fail")
     >>> browser.contents
     '{"_runtime": ..., "message": "This failed badly", "success": false}'
+
+
+Test XML::
+
+    >>> @router.add_route("/xml", "xml", methods=["GET"])
+    ... def xml(context, request):
+    ...     return {"type": "xml"}
+    >>> browser.open(api_url + "/xml?asxml=1")
+    >>> browser.contents
+    '<?xml version="1.0" encoding="UTF-8" ?><root><type type="str">xml</type></root>'
+
+
+Test Binary Stream::
+
+    >>> @router.add_route("/data", "data", methods=["GET"])
+    ... def data(context, request):
+    ...     return self.get_testfile_path()
+    >>> browser.open(api_url + "/data?asbinary=1")
+    >>> browser.contents
+    '%PDF-...'

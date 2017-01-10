@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 import simplejson as json
 
 import unittest2 as unittest
@@ -65,3 +67,6 @@ class APITestCase(unittest.TestCase):
 
     def decode(self, s):
         return json.loads(s)
+
+    def get_testfile_path(self):
+        return os.path.join(os.path.dirname(__file__), "plone.pdf")
