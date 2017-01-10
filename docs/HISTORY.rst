@@ -5,6 +5,9 @@ Changelog
 0.6 - unreleased
 ----------------
 
+- https://github.com/collective/plone.jsonapi.core/issues/18
+  Handle None values
+
 - https://github.com/collective/plone.jsonapi.core/issues/17
   Print out Traceback's to the console and not back to the client
 

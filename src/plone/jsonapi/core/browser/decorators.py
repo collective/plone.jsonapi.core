@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import time
+import types
 import traceback
 import simplejson as json
 from helpers import error
@@ -32,6 +33,8 @@ def runtime(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
+        if type(result) is not types.DictType:
+            result = error("Route providers must return a dictionary.")
         result.update(dict(_runtime=end-start))
         return result
 
