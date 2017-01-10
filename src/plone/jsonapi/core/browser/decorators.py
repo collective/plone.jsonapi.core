@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
 
+import os
 import time
 import types
+import dicttoxml
 import traceback
+
 import simplejson as json
 from helpers import error
+
+from ZPublisher.Iterators import filestream_iterator
 
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
@@ -67,5 +72,32 @@ def supports_jsonp(func):
         if c is not None:
             return "%s(%s);" % (str(c), func(*args, **kwargs))
         return func(*args, **kwargs)
+
+    return decorator
+
+
+def returns_binary_stream(func):
+    """ returns a binary file stream
+    """
+    def decorator(*args, **kwargs):
+        instance = args[0]
+        request = getattr(instance, 'request', None)
+        request.response.setHeader('Content-Type', 'application/zip')
+        zip_out = func(*args, **kwargs)
+        request.response.setHeader('Content-Length', str(os.path.getsize(zip_out)))
+        return filestream_iterator(zip_out)
+
+    return decorator
+
+
+def returns_xml(func):
+    """ returns xml
+    """
+    def decorator(*args, **kwargs):
+        instance = args[0]
+        request = getattr(instance, 'request', None)
+        request.response.setHeader('Content-Type', 'application/xml')
+        result = func(*args, **kwargs)
+        return dicttoxml.dicttoxml(result)
 
     return decorator

@@ -2,8 +2,17 @@ Changelog
 =========
 
 
-0.6 - unreleased
+0.6 - 2017-01-10
 ----------------
+
+- Supports XML response.
+  Use the request parameter `asxml=1` or set the request `Accept` header to
+  `application/xml`
+
+- https://github.com/collective/plone.jsonapi.core/issues/21
+  Support file streams.
+  Use the request parameter `asbinary=1` or set the request `Accept` header to
+  `application/zip`
 
 - https://github.com/collective/plone.jsonapi.core/issues/22
   Do not store the request on the router upon initialization
@@ -13,6 +22,7 @@ Changelog
 
 - https://github.com/collective/plone.jsonapi.core/issues/17
   Print out Traceback's to the console and not back to the client
+
 
 0.5 - 2015-07-09
 ----------------

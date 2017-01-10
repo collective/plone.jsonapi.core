@@ -38,6 +38,7 @@ setup(name='plone.jsonapi.core',
           'setuptools',
           'werkzeug>=0.7.2',
           'simplejson>=2.0.9',
+          'dicttoxml'
           # -*- Extra requirements: -*-
       ],
       extras_require={
