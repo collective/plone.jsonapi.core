@@ -18,7 +18,9 @@ def handle_errors(f):
             return f(*args, **kwargs)
         # XXX we should create a custom Exception class
         except Exception, e:
-            return error(str(e), error=str(traceback.format_exc()))
+            # Print out the exception to the console
+            traceback.print_exc()
+            return error(str(e))
     return decorator
 
 
