@@ -3,6 +3,9 @@
     xmlns:five="http://namespaces.zope.org/five"
     i18n_domain="plone.jsonapi">
 
-  <include package=".browser" />
+    <!-- Zope2 initialization -->
+    <five:registerPackage package="." initialize=".initialize" />
+
+    <include package=".browser" />
 
 </configure>

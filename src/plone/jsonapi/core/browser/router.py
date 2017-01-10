@@ -4,6 +4,8 @@ import logging
 from urlparse import urlsplit
 
 from zope import component
+from zope.globalrequest import getRequest
+
 from werkzeug.routing import Map, Rule
 
 from interfaces import IRouteProvider
@@ -30,9 +32,6 @@ class Router(object):
         """ called by the API Framework
         """
         logger.debug("DefaultRouter.initialize: context=%r request=%r" % (context, request))
-
-        self.context = context
-        self.request = request
 
         self.environ = request.environ
         self.http_host = urlsplit(request.get("ACTUAL_URL", "")).netloc
@@ -66,10 +65,13 @@ class Router(object):
             endpoint = view_func.__name__
 
         old_func = self.view_functions.get(endpoint)
+
+        # Avoid route overwriting
         if old_func is not None and old_func != view_func:
             raise AssertionError('View function mapping is overwriting an '
                                  'existing endpoint function: %s' % endpoint)
 
+        # Store the view function below the endpoint
         self.view_functions[endpoint] = view_func
 
         if options is None:
@@ -111,7 +113,8 @@ class Router(object):
 
         # XXX: this is all a little bit hacky, especially when it comes to virtual hosting.
 
-        spp = self.request.physicalPathFromURL(self.url)
+        request = getRequest()
+        spp = request.physicalPathFromURL(self.url)
 
         # find the API view root
         path = []
@@ -120,8 +123,8 @@ class Router(object):
             if el == "API" or el == "@@API":
                 break
 
-        virt_path = self.request.physicalPathToVirtualPath(path)
-        script_name = self.request.physicalPathToURL(virt_path, relative=1)
+        virt_path = request.physicalPathToVirtualPath(path)
+        script_name = request.physicalPathToURL(virt_path, relative=1)
 
         adapter = self.get_adapter(script_name=script_name)
         return adapter.build(endpoint, **options)

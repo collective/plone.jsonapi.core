@@ -5,6 +5,9 @@ Changelog
 0.6 - unreleased
 ----------------
 
+- https://github.com/collective/plone.jsonapi.core/issues/22
+  Do not store the request on the router upon initialization
+
 - https://github.com/collective/plone.jsonapi.core/issues/18
   Handle None values
 
