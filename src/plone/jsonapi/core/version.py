@@ -13,8 +13,8 @@ def version():
 
 
 __version__ = version()
-__build__ = 42
-__date__ = '2015-07-09'
+__build__ = 50
+__date__ = '2017-01-10'
 
 
 @router.add_route("/version", "apiversion", methods=["GET"])
