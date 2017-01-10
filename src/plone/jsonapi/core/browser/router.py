@@ -53,7 +53,6 @@ class Router(object):
 
         self.is_initialized = True
 
-
     def add_url_rule(self, rule, endpoint=None, view_func=None, options=None):
         """ adds a rule to the url map
 
@@ -138,14 +137,15 @@ class Router(object):
 
 DefaultRouter = Router()
 
+
 def DefaultRouterFactory():
     logger.debug("DefaultRouterFactory")
     return DefaultRouter
 
 
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 # Exposed Router API
-#-----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
 
 def add_route(rule, endpoint=None, **kw):
     """ wrapper to add an url rule

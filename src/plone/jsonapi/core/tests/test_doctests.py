@@ -8,6 +8,7 @@ from Testing import ZopeTestCase as ztc
 
 from plone.jsonapi.core.tests.base import APITestCase
 
+
 def test_suite():
     suite = unittest.TestSuite()
     suite.addTests([

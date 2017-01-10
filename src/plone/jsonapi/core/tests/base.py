@@ -20,7 +20,6 @@ from zope.configuration import xmlconfig
 class TestLayer(PloneSandboxLayer):
     defaultBases = (PLONE_FIXTURE,)
 
-
     def setUpZope(self, app, configurationContext):
         # Load ZCML
         import plone.jsonapi.core
@@ -43,7 +42,7 @@ class TestLayer(PloneSandboxLayer):
 
 TEST_FIXTURE = TestLayer()
 INTEGRATION_TESTING = IntegrationTesting(bases=(TEST_FIXTURE,),
-                          name="plone.jsonapi.core:Integration")
+                                         name="plone.jsonapi.core:Integration")
 
 
 class APITestCase(unittest.TestCase):

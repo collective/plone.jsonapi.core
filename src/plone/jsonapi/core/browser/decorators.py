@@ -33,9 +33,9 @@ def runtime(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        if type(result) is not types.DictType:
+        if not isinstance(result, types.DictType):
             result = error("Route providers must return a dictionary.")
-        result.update(dict(_runtime=end-start))
+        result.update(dict(_runtime=end - start))
         return result
 
     return decorator
