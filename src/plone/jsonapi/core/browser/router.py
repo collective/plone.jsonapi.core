@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
-from urlparse import urlsplit
+from six.moves.urllib.parse import urlsplit
 
 from zope import component
 from zope.globalrequest import getRequest
@@ -60,7 +60,7 @@ class Router(object):
         :param endpoint:  The endpoint for this rule. This can be anything
         :param options:   additional options to be passed to the router
         """
-        logger.debug("DefaultRouter.add_url_rule: %s (%s) -> %r options: %r", rule, endpoint, view_func.func_name, options)
+        logger.debug("DefaultRouter.add_url_rule: %s (%s) -> %r options: %r", rule, endpoint, view_func.__name__, options)
         if endpoint is None:
             endpoint = view_func.__name__
 

@@ -23,7 +23,7 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         # XXX we should create a custom Exception class
-        except Exception, e:
+        except Exception as e:
             # Print out the exception to the console
             traceback.print_exc()
             return error(str(e))
@@ -38,7 +38,7 @@ def runtime(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        if not isinstance(result, types.DictType):
+        if not isinstance(result, dict):
             result = error("Route providers must return a dictionary.")
         result.update(dict(_runtime=end - start))
         return result

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import print_function
 import os
 import re
 import json
@@ -49,20 +50,20 @@ def preview_docs():
 def reload():
     execute(bump_version)
     local("wget --delete-after http://admin:admin@localhost:8080/@@reload?action=code")
-    print green("RELOADED CODE")
+    print(green("RELOADED CODE"))
 
 
 @task
 def version():
-    print green(json.dumps(get_version()))
+    print(green(json.dumps(get_version())))
 
 
 @task
 def bump_version():
     """Bump up the version number"""
-    print yellow("bumping version ...")
+    print(yellow("bumping version ..."))
     write_version_info()
-    print green("adding file '%s' to next commit." % env.version_file)
+    print(green("adding file '%s' to next commit." % env.version_file))
     local("git add " + env.version_file)
     execute(version)
 
@@ -74,7 +75,7 @@ def bump_version():
 def get_version():
     f = env.version_file
     out = {}
-    lines = file(f).readlines()
+    lines = open(f).readlines()
     for l in lines:
         if "=" in l and l.split("=")[0].strip() in ("__build__", "__date__", "__version__"):
             name, value = l.split("=")
@@ -98,4 +99,4 @@ def write_version_info():
         elif re.findall("__date__.*=", line):
             now = datetime.datetime.now().strftime("%Y-%m-%d")
             line = "__date__ = '%s'" % now
-        print line.strip("\n")
+        print(line.strip("\n"))
