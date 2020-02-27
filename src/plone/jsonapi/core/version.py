@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from browser import router
+from .browser import router
 
 import pkg_resources
 

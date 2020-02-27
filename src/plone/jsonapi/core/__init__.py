@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from browser import decorators
-from browser import router
+from . import version
+from .browser import decorators
+from .browser import router
 
 import logging
-import version
 
 
 logger = logging.getLogger("plone.jsonapi.routes")

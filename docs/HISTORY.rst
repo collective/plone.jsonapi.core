@@ -5,7 +5,8 @@ Changelog
 0.7.0 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Use absolute imports.
+  And other fixes for Python 2/3 compatibility.
 
 
 0.6 - 2017-01-10

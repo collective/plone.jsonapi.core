@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from helpers import error
+from .helpers import error
 from ZPublisher.Iterators import filestream_iterator
 
 import dicttoxml

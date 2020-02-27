@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from interfaces import IRouteProvider
+from .interfaces import IRouteProvider
 from six.moves.urllib.parse import urlsplit
 from werkzeug.routing import Map
 from werkzeug.routing import Rule
