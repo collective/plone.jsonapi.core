@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import doctest
-
-import unittest2 as unittest
-
+from plone.jsonapi.core.tests.base import APITestCase
 from Testing import ZopeTestCase as ztc
 
-from plone.jsonapi.core.tests.base import APITestCase
+import doctest
+import unittest2 as unittest
 
 
 def test_suite():

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from plone.jsonapi.core import router
-
 from plone.jsonapi.core.tests.base import APITestCase
 
 

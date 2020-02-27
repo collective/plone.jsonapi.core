@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
+from setuptools import find_packages
+from setuptools import setup
+
 import os
-from setuptools import setup, find_packages
+
 
 version = '0.6'
 

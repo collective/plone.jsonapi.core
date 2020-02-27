@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 
-import logging
+from interfaces import IRouteProvider
 from six.moves.urllib.parse import urlsplit
-
+from werkzeug.routing import Map
+from werkzeug.routing import Rule
 from zope import component
 from zope.globalrequest import getRequest
 
-from werkzeug.routing import Map, Rule
+import logging
 
-from interfaces import IRouteProvider
 
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'

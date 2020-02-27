@@ -1,22 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import os
-
-import simplejson as json
-
-import unittest2 as unittest
-
-from plone.testing.z2 import Browser
-
-from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import setRoles
 from plone.app.testing import TEST_USER_ID
-from plone.testing import z2
-
-
 from plone.app.testing.layers import IntegrationTesting
+from plone.testing import z2
+from plone.testing.z2 import Browser
 from zope.configuration import xmlconfig
+
+import os
+import simplejson as json
+import unittest2 as unittest
 
 
 class TestLayer(PloneSandboxLayer):

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import pkg_resources
 from browser import router
+
+import pkg_resources
+
 
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'

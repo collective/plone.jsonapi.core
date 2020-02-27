@@ -1,22 +1,19 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
-from zope import component
-
-from zope.interface import implements
-
-from Products.Five import BrowserView
-from zope.publisher.interfaces import IPublishTraverse
-
-from decorators import runtime
-from decorators import returns_xml
-from decorators import returns_json
-from decorators import returns_binary_stream
 from decorators import handle_errors
-
+from decorators import returns_binary_stream
+from decorators import returns_json
+from decorators import returns_xml
+from decorators import runtime
 from interfaces import IAPI
 from interfaces import IRouter
+from Products.Five import BrowserView
+from zope import component
+from zope.interface import implements
+from zope.publisher.interfaces import IPublishTraverse
+
+import logging
+
 
 __author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
 __docformat__ = 'plaintext'
