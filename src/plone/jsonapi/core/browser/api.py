@@ -9,7 +9,7 @@ from .interfaces import IAPI
 from .interfaces import IRouter
 from Products.Five import BrowserView
 from zope import component
-from zope.interface import implements
+from zope.interface import implementer
 from zope.publisher.interfaces import IPublishTraverse
 
 import logging
@@ -22,11 +22,11 @@ __docformat__ = "plaintext"
 logger = logging.getLogger("plone.jsonapi.core.api")
 
 
+@implementer(IAPI, IPublishTraverse)
 class API(BrowserView):
     """ JSON API Framework
     """
 
-    implements(IAPI, IPublishTraverse)
 
     def __init__(self, context, request):
         self.context = context
