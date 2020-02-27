@@ -12,7 +12,7 @@ def test_suite():
     suite.addTests(
         [
             ztc.ZopeDocFileSuite(
-                '../docs/Readme.txt',
+                "../docs/Readme.txt",
                 test_class=APITestCase,
                 optionflags=doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE,
             ),

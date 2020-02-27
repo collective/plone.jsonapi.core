@@ -10,8 +10,8 @@ from zope.globalrequest import getRequest
 import logging
 
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 logger = logging.getLogger("plone.jsonapi.core.router")
 
@@ -31,7 +31,9 @@ class Router(object):
     def initialize(self, context, request):
         """ called by the API Framework
         """
-        logger.debug("DefaultRouter.initialize: context=%r request=%r" % (context, request))
+        logger.debug(
+            "DefaultRouter.initialize: context=%r request=%r" % (context, request)
+        )
 
         self.environ = request.environ
         self.http_host = urlsplit(request.get("ACTUAL_URL", "")).netloc
@@ -42,7 +44,9 @@ class Router(object):
 
         logger.debug("DefaultRouter::initialize")
         for name, provider in component.getUtilitiesFor(IRouteProvider):
-            logger.debug("DefaultRouter::initialize: name=%s, provider=%r", name, provider)
+            logger.debug(
+                "DefaultRouter::initialize: name=%s, provider=%r", name, provider
+            )
 
             if getattr(provider, "initialize", None):
                 provider.initialize(context, request)
@@ -75,8 +79,8 @@ class Router(object):
         # Avoid route overwriting
         if old_func is not None and old_func != view_func:
             raise AssertionError(
-                'View function mapping is overwriting an '
-                'existing endpoint function: %s' % endpoint
+                "View function mapping is overwriting an "
+                "existing endpoint function: %s" % endpoint
             )
 
         # Store the view function below the endpoint

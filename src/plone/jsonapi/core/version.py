@@ -5,8 +5,8 @@ from browser import router
 import pkg_resources
 
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 
 def version():
@@ -16,7 +16,7 @@ def version():
 
 __version__ = version()
 __build__ = 50
-__date__ = '2017-01-10'
+__date__ = "2017-01-10"
 
 
 @router.add_route("/version", "apiversion", methods=["GET"])

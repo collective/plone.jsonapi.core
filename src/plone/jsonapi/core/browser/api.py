@@ -15,8 +15,8 @@ from zope.publisher.interfaces import IPublishTraverse
 import logging
 
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 
 logger = logging.getLogger("plone.jsonapi.core.api")

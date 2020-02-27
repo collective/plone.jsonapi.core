@@ -21,17 +21,19 @@ class TestLayer(PloneSandboxLayer):
         # Load ZCML
         import plone.jsonapi.core
 
-        xmlconfig.file('configure.zcml', plone.jsonapi.core, context=configurationContext)
+        xmlconfig.file(
+            "configure.zcml", plone.jsonapi.core, context=configurationContext
+        )
 
         # Install product and call its initialize() function
-        z2.installProduct(app, 'plone.jsonapi.core')
+        z2.installProduct(app, "plone.jsonapi.core")
 
     def tearDownZope(self, app):
         # Uninstall product
-        z2.uninstallProduct(app, 'plone.jsonapi.core')
+        z2.uninstallProduct(app, "plone.jsonapi.core")
 
     def setUpPloneSite(self, portal):
-        setRoles(portal, TEST_USER_ID, ['Manager'])
+        setRoles(portal, TEST_USER_ID, ["Manager"])
 
         # Test fixture -- p.j.c. needs to have a request
         from plone.jsonapi.core import router

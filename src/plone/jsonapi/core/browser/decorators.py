@@ -11,8 +11,8 @@ import traceback
 import types
 
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 
 def handle_errors(f):
@@ -53,7 +53,7 @@ def returns_json(func):
 
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
+        request = getattr(instance, "request", None)
         request.response.setHeader("Content-Type", "application/json")
         result = func(*args, **kwargs)
         return json.dumps(result)
@@ -67,7 +67,7 @@ def supports_jsonp(func):
 
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
+        request = getattr(instance, "request", None)
 
         c = request.form.get("c", None)
         if c is not None:
@@ -83,10 +83,10 @@ def returns_binary_stream(func):
 
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
-        request.response.setHeader('Content-Type', 'application/zip')
+        request = getattr(instance, "request", None)
+        request.response.setHeader("Content-Type", "application/zip")
         zip_out = func(*args, **kwargs)
-        request.response.setHeader('Content-Length', str(os.path.getsize(zip_out)))
+        request.response.setHeader("Content-Length", str(os.path.getsize(zip_out)))
         return filestream_iterator(zip_out)
 
     return decorator
@@ -98,8 +98,8 @@ def returns_xml(func):
 
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
-        request.response.setHeader('Content-Type', 'application/xml')
+        request = getattr(instance, "request", None)
+        request.response.setHeader("Content-Type", "application/xml")
         result = func(*args, **kwargs)
         return dicttoxml.dicttoxml(result)
 
