@@ -22,8 +22,8 @@ __date__ = '2017-01-10'
 @router.add_route("/version", "apiversion", methods=["GET"])
 def apiversion(context, request):
     return {
-        "url":     router.url_for("apiversion", force_external=True),
+        "url": router.url_for("apiversion", force_external=True),
         "version": __version__,
-        "build":   __build__,
-        "date":    __date__,
+        "build": __build__,
+        "date": __date__,
     }

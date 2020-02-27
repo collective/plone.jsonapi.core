@@ -27,6 +27,7 @@ def handle_errors(f):
             # Print out the exception to the console
             traceback.print_exc()
             return error(str(e))
+
     return decorator
 
 
@@ -79,6 +80,7 @@ def supports_jsonp(func):
 def returns_binary_stream(func):
     """ returns a binary file stream
     """
+
     def decorator(*args, **kwargs):
         instance = args[0]
         request = getattr(instance, 'request', None)
@@ -93,6 +95,7 @@ def returns_binary_stream(func):
 def returns_xml(func):
     """ returns xml
     """
+
     def decorator(*args, **kwargs):
         instance = args[0]
         request = getattr(instance, 'request', None)

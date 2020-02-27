@@ -29,6 +29,7 @@ env.version_file = "src/plone/jsonapi/core/version.py"
 # Public API
 # -----------------------------------------------------------------------------
 
+
 @task
 def test():
     local("./bin/test -s plone.jsonapi.core")
@@ -71,6 +72,7 @@ def bump_version():
 # -----------------------------------------------------------------------------
 # Functional Helpers
 # -----------------------------------------------------------------------------
+
 
 def get_version():
     f = env.version_file

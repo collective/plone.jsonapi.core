@@ -25,6 +25,7 @@ logger = logging.getLogger("plone.jsonapi.core.api")
 class API(BrowserView):
     """ JSON API Framework
     """
+
     implements(IAPI, IPublishTraverse)
 
     def __init__(self, context, request):

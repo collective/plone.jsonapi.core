@@ -20,6 +20,7 @@ class TestLayer(PloneSandboxLayer):
     def setUpZope(self, app, configurationContext):
         # Load ZCML
         import plone.jsonapi.core
+
         xmlconfig.file('configure.zcml', plone.jsonapi.core, context=configurationContext)
 
         # Install product and call its initialize() function
@@ -34,12 +35,14 @@ class TestLayer(PloneSandboxLayer):
 
         # Test fixture -- p.j.c. needs to have a request
         from plone.jsonapi.core import router
+
         router.DefaultRouter.initialize(portal, portal.REQUEST)
 
 
 TEST_FIXTURE = TestLayer()
-INTEGRATION_TESTING = IntegrationTesting(bases=(TEST_FIXTURE,),
-                                         name="plone.jsonapi.core:Integration")
+INTEGRATION_TESTING = IntegrationTesting(
+    bases=(TEST_FIXTURE,), name="plone.jsonapi.core:Integration"
+)
 
 
 class APITestCase(unittest.TestCase):
