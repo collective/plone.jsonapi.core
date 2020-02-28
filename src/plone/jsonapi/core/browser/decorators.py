@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-import os
-import time
-import types
-import dicttoxml
-import traceback
-
-import simplejson as json
-from helpers import error
-
+from .helpers import error
 from ZPublisher.Iterators import filestream_iterator
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+import dicttoxml
+import os
+import simplejson as json
+import time
+import traceback
+import types
+
+
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 
 def handle_errors(f):
@@ -23,10 +23,11 @@ def handle_errors(f):
         try:
             return f(*args, **kwargs)
         # XXX we should create a custom Exception class
-        except Exception, e:
+        except Exception as e:
             # Print out the exception to the console
             traceback.print_exc()
             return error(str(e))
+
     return decorator
 
 
@@ -38,7 +39,7 @@ def runtime(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        if not isinstance(result, types.DictType):
+        if not isinstance(result, dict):
             result = error("Route providers must return a dictionary.")
         result.update(dict(_runtime=end - start))
         return result
@@ -52,7 +53,7 @@ def returns_json(func):
 
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
+        request = getattr(instance, "request", None)
         request.response.setHeader("Content-Type", "application/json")
         result = func(*args, **kwargs)
         return json.dumps(result)
@@ -66,7 +67,7 @@ def supports_jsonp(func):
 
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
+        request = getattr(instance, "request", None)
 
         c = request.form.get("c", None)
         if c is not None:
@@ -79,12 +80,13 @@ def supports_jsonp(func):
 def returns_binary_stream(func):
     """ returns a binary file stream
     """
+
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
-        request.response.setHeader('Content-Type', 'application/zip')
+        request = getattr(instance, "request", None)
+        request.response.setHeader("Content-Type", "application/zip")
         zip_out = func(*args, **kwargs)
-        request.response.setHeader('Content-Length', str(os.path.getsize(zip_out)))
+        request.response.setHeader("Content-Length", str(os.path.getsize(zip_out)))
         return filestream_iterator(zip_out)
 
     return decorator
@@ -93,10 +95,11 @@ def returns_binary_stream(func):
 def returns_xml(func):
     """ returns xml
     """
+
     def decorator(*args, **kwargs):
         instance = args[0]
-        request = getattr(instance, 'request', None)
-        request.response.setHeader('Content-Type', 'application/xml')
+        request = getattr(instance, "request", None)
+        request.response.setHeader("Content-Type", "application/xml")
         result = func(*args, **kwargs)
         return dicttoxml.dicttoxml(result)
 

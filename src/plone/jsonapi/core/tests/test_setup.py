@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from plone.jsonapi.core import router
-
 from plone.jsonapi.core.tests.base import APITestCase
 
 
@@ -15,6 +14,7 @@ class TestSetup(APITestCase):
 
 def test_suite():
     from unittest import TestSuite, makeSuite
+
     suite = TestSuite()
     suite.addTest(makeSuite(TestSetup))
     return suite

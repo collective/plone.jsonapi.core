@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 
-import logging
-from urlparse import urlsplit
-
+from .interfaces import IRouteProvider
+from six.moves.urllib.parse import urlsplit
+from werkzeug.routing import Map
+from werkzeug.routing import Rule
 from zope import component
 from zope.globalrequest import getRequest
 
-from werkzeug.routing import Map, Rule
+import logging
 
-from interfaces import IRouteProvider
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 logger = logging.getLogger("plone.jsonapi.core.router")
 
@@ -31,7 +31,9 @@ class Router(object):
     def initialize(self, context, request):
         """ called by the API Framework
         """
-        logger.debug("DefaultRouter.initialize: context=%r request=%r" % (context, request))
+        logger.debug(
+            "DefaultRouter.initialize: context=%r request=%r" % (context, request)
+        )
 
         self.environ = request.environ
         self.http_host = urlsplit(request.get("ACTUAL_URL", "")).netloc
@@ -42,7 +44,9 @@ class Router(object):
 
         logger.debug("DefaultRouter::initialize")
         for name, provider in component.getUtilitiesFor(IRouteProvider):
-            logger.debug("DefaultRouter::initialize: name=%s, provider=%r", name, provider)
+            logger.debug(
+                "DefaultRouter::initialize: name=%s, provider=%r", name, provider
+            )
 
             if getattr(provider, "initialize", None):
                 provider.initialize(context, request)
@@ -60,7 +64,13 @@ class Router(object):
         :param endpoint:  The endpoint for this rule. This can be anything
         :param options:   additional options to be passed to the router
         """
-        logger.debug("DefaultRouter.add_url_rule: %s (%s) -> %r options: %r", rule, endpoint, view_func.func_name, options)
+        logger.debug(
+            "DefaultRouter.add_url_rule: %s (%s) -> %r options: %r",
+            rule,
+            endpoint,
+            view_func.__name__,
+            options,
+        )
         if endpoint is None:
             endpoint = view_func.__name__
 
@@ -68,8 +78,10 @@ class Router(object):
 
         # Avoid route overwriting
         if old_func is not None and old_func != view_func:
-            raise AssertionError('View function mapping is overwriting an '
-                                 'existing endpoint function: %s' % endpoint)
+            raise AssertionError(
+                "View function mapping is overwriting an "
+                "existing endpoint function: %s" % endpoint
+            )
 
         # Store the view function below the endpoint
         self.view_functions[endpoint] = view_func
@@ -150,6 +162,7 @@ def DefaultRouterFactory():
 # Exposed Router API
 # -----------------------------------------------------------------------------
 
+
 def add_route(rule, endpoint=None, **kw):
     """ wrapper to add an url rule
 
@@ -160,9 +173,11 @@ def add_route(rule, endpoint=None, **kw):
     ... def hello(context, request, name="world"):
     ...     return dict(hello=name)
     """
+
     def wrapper(f):
         DefaultRouter.add_url_rule(rule, endpoint=endpoint, view_func=f, options=kw)
         return f
+
     return wrapper
 
 

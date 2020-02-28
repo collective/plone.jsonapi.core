@@ -1,34 +1,32 @@
 # -*- coding: utf-8 -*-
 
-import logging
-
-from zope import component
-
-from zope.interface import implements
-
+from .decorators import handle_errors
+from .decorators import returns_binary_stream
+from .decorators import returns_json
+from .decorators import returns_xml
+from .decorators import runtime
+from .interfaces import IAPI
+from .interfaces import IRouter
 from Products.Five import BrowserView
+from zope import component
+from zope.interface import implementer
 from zope.publisher.interfaces import IPublishTraverse
 
-from decorators import runtime
-from decorators import returns_xml
-from decorators import returns_json
-from decorators import returns_binary_stream
-from decorators import handle_errors
+import logging
 
-from interfaces import IAPI
-from interfaces import IRouter
 
-__author__ = 'Ramon Bartl <ramon.bartl@googlemail.com>'
-__docformat__ = 'plaintext'
+__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__docformat__ = "plaintext"
 
 
 logger = logging.getLogger("plone.jsonapi.core.api")
 
 
+@implementer(IAPI, IPublishTraverse)
 class API(BrowserView):
     """ JSON API Framework
     """
-    implements(IAPI, IPublishTraverse)
+
 
     def __init__(self, context, request):
         self.context = context
