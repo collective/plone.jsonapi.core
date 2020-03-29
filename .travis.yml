@@ -1,17 +1,15 @@
 language: python
-python: 2.7
+python: 3.8
 sudo: false
 cache:
   directories:
   - eggs
   - parts/node
 env:
-- PLONE_VERSION=4.3
-- PLONE_VERSION=5.0
+- PLONE_VERSION=5.3
 matrix:
   fast_finish: true
 install:
-- sed -ie "s#test-4.3#test-$PLONE_VERSION#" buildout.cfg
 - python bootstrap.py
 - bin/buildout annotate
 - bin/buildout -Nq
@@ -22,5 +20,3 @@ after_success:
 - bin/createcoverage
 - pip install -q coveralls
 - coveralls
-notifications:
-  irc: irc.freenode.org#plone-testing
