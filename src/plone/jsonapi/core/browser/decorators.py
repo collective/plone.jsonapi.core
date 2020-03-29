@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 
-from .helpers import error
-from ZPublisher.Iterators import filestream_iterator
-
-import dicttoxml
 import os
-import simplejson as json
 import time
 import traceback
-import types
 
+import dicttoxml
+import simplejson as json
+from ZPublisher.Iterators import filestream_iterator
+
+from .helpers import error
 
 __author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
 __docformat__ = "plaintext"

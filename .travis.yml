@@ -1,26 +1,12 @@
-language: python
-python: 2.7
-sudo: false
-cache:
-  directories:
-  - eggs
-  - parts/node
-env:
-- PLONE_VERSION=4.3
-- PLONE_VERSION=5.0
+version: ~> 1.0
+import: collective/buildout.plonetest:travis/default.yml
 matrix:
-  fast_finish: true
-install:
-- sed -ie "s#test-4.3#test-$PLONE_VERSION#" buildout.cfg
-- python bootstrap.py
-- bin/buildout annotate
-- bin/buildout -Nq
-script:
-- bin/code-analysis
-- bin/test
-after_success:
-- bin/createcoverage
-- pip install -q coveralls
-- coveralls
-notifications:
-  irc: irc.freenode.org#plone-testing
+  include:
+#    - python: "2.7"
+#      env: PLONE_VERSION="4.3"
+#    - python: "2.7"
+#      env: PLONE_VERSION="5.1"
+#    - python: "2.7"
+#      env: PLONE_VERSION="5.2"
+    - python: "3.8"
+      env: PLONE_VERSION="5.2"
