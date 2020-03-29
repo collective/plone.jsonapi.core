@@ -2,11 +2,11 @@ Changelog
 =========
 
 
-0.7.0 (unreleased)
+0.7.0 - 2020-03-29
 ------------------
 
-- Use absolute imports.
-  And other fixes for Python 2/3 compatibility.
+- https://github.com/collective/plone.jsonapi.core/pull/23
+  Add Python3 compatibility
 
 
 0.6 - 2017-01-10
@@ -79,5 +79,3 @@ Changelog
 ----------------
 
 - initial start of development
-
-.. vim: set ft=rst ts=4 sw=4 expandtab tw=78 :
