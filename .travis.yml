@@ -2,11 +2,11 @@ version: ~> 1.0
 import: collective/buildout.plonetest:travis/default.yml
 matrix:
   include:
-    - python: "2.7"
-      env: PLONE_VERSION="4.3"
-    - python: "2.7"
-      env: PLONE_VERSION="5.1"
-    - python: "2.7"
-      env: PLONE_VERSION="5.2"
+#    - python: "2.7"
+#      env: PLONE_VERSION="4.3"
+#    - python: "2.7"
+#      env: PLONE_VERSION="5.1"
+#    - python: "2.7"
+#      env: PLONE_VERSION="5.2"
     - python: "3.8"
       env: PLONE_VERSION="5.2"
