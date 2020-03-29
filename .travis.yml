@@ -10,9 +10,8 @@ env:
 matrix:
   fast_finish: true
 install:
-- pip install -f requirements.txt
-- bin/buildout annotate
-- bin/buildout -Nq
+- buildout annotate
+- buildout -Nq
 script:
 - bin/code-analysis
 - bin/test
