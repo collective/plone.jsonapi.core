@@ -2,7 +2,7 @@ plone.jsonapi.core
 ==================
 
 :Author:  Ramon Bartl
-:Version: 0.6
+:Version: 0.7.0
 
 .. contents:: Table of Contents
    :depth: 2
@@ -56,7 +56,7 @@ See: http://developer.plone.org/security/permission_lists.html
 Compatibility
 -------------
 
-The plone.jsonapi.core_ should work with Plone_ 3 and 4.
+The plone.jsonapi.core_ should work with Plone_ 3, 4 and 5 on Python 3.
 
 .. note:: Users of Plone_ 3 should pin the versions of simplejson_ and Werkzeug_.
 
