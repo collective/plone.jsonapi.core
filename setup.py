@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
 
+import os
+
 from setuptools import find_packages
 from setuptools import setup
 
-import os
 
-
-version = "0.7.0.dev0"
+version = "0.7.0"
 
 long_description = (
     open("README.rst").read()
     + "\n"
-    + open(os.path.join("src", "plone", "jsonapi", "core", "docs", "Readme.txt")).read()
+    + open(os.path.join(
+        "src", "plone", "jsonapi", "core", "docs", "Readme.txt")).read()
     + "\n"
     + open(os.path.join("docs", "HISTORY.rst")).read()
     + "\n"
@@ -46,7 +47,7 @@ setup(
         "dicttoxml"
         # -*- Extra requirements: -*-
     ],
-    extras_require={"test": ["plone.app.testing", "unittest2",]},
+    extras_require={"test": ["plone.app.testing", "unittest2", ]},
     entry_points="""
       # -*- Entry points: -*-
       [z3c.autoinclude.plugin]
