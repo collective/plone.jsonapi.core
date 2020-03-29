@@ -279,12 +279,6 @@ Output::
 
 
 
-License
--------
-
-MIT - do what you want
-
-
 .. _Plone: http://plone.org
 .. _Dexterity: https://pypi.python.org/pypi/plone.dexterity
 .. _Werkzeug: http://werkzeug.pocoo.org

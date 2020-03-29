@@ -34,7 +34,7 @@ setup(
     author="Ramon Bartl",
     author_email="rb@ridingbytes.com",
     url="https://github.com/collective/plone.jsonapi.core",
-    license="MIT",
+    license="GPLv2",
     packages=find_packages("src"),
     package_dir={"": "src"},
     namespace_packages=["plone", "plone.jsonapi"],
