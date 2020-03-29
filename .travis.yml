@@ -10,7 +10,7 @@ env:
 matrix:
   fast_finish: true
 install:
-- python bootstrap.py
+- pip install -f requirements.txt
 - bin/buildout annotate
 - bin/buildout -Nq
 script:
