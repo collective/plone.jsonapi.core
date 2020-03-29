@@ -5,6 +5,7 @@ cache:
   pip: true
   directories:
     - eggs
+python: 3.8
 env:
 - PLONE_VERSION=5.2
 before_install:
@@ -16,9 +17,5 @@ install:
   - bin/buildout -N -t 3
 script:
   - bin/test --all
-after_success:
-  - bin/createcoverage --output-dir=parts/test/coverage
-  - pip install -q coveralls
-  - coveralls
 matrix:
   fast_finish: true
