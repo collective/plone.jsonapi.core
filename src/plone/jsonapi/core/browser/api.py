@@ -83,10 +83,16 @@ class API(BrowserView):
 
     @returns_binary_stream
     def to_binary_stream(self):
+        # NOTE: no @handle_errors here -- the error envelope is a dict,
+        # which cannot be turned into a binary file stream. Errors in a
+        # binary route surface as a normal Zope error response.
         return self.dispatch()
 
     @returns_xml
+    @handle_errors
     def to_xml(self):
+        # handle_errors returns the error envelope as a dict, which
+        # returns_xml renders as XML just like a normal result.
         return self.dispatch()
 
     def __call__(self):
