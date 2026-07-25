@@ -18,4 +18,11 @@
         provides=".interfaces.IRouter"
         factory=".router.DefaultRouterFactory" />
 
+    <!-- The default error handler. Consumers can override this
+         utility to replace the JSON error envelope shape without
+         monkey-patching handle_errors. -->
+    <utility
+        provides=".interfaces.IErrorHandler"
+        component=".decorators.default_error_handler" />
+
 </configure>

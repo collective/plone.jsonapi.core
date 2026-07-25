@@ -5,6 +5,7 @@ Changelog
 0.8.0 (unreleased)
 ------------------
 
+- #30 Swappable error handler with clean envelope and status flow
 - #29 Add APIError hierarchy and IErrorHandler interface
 
 
