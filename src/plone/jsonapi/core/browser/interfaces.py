@@ -3,7 +3,7 @@
 from zope import interface
 
 
-__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__author__ = "Ramon Bartl <rb@ridingbytes.com>"
 __docformat__ = "plaintext"
 
 
@@ -36,4 +36,22 @@ class IRouteProvider(interface.Interface):
     def routes(self):
         """ needs to return a tuple of tuples containing
             rule, endpoint, view_func and additional options
+        """
+
+
+class IErrorHandler(interface.Interface):
+    """Renders an exception raised by a JSON API route into the
+    response envelope.
+
+    Registered as an unnamed utility. Consumers can register their
+    own utility to customize the envelope (extra fields, i18n,
+    hiding internals in production, ...) without monkey-patching
+    the decorator.
+    """
+
+    def __call__(exc, request):
+        """Return the JSON-ready dict for the given exception.
+
+        The utility is responsible for setting the HTTP response
+        status on `request.response`.
         """

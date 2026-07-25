@@ -2,6 +2,12 @@ Changelog
 =========
 
 
+0.8.0 (unreleased)
+------------------
+
+- #29 Add APIError hierarchy and IErrorHandler interface
+
+
 0.7.0 - 2020-03-29
 ------------------
 
