@@ -30,19 +30,18 @@ class Router(object):
         self.view_functions = {}
         self.url_map = Map()
         self.is_initialized = False
-        self.http_host = ""
 
     def initialize(self, context, request):
-        """ called by the API Framework
+        """Build the route table once from the registered IRouteProvider
+        utilities.
+
+        The router is a process-global singleton shared across request
+        threads, so it deliberately stores NO per-request state. Anything
+        derived from the current request (host, scheme, URL) is read from
+        the thread-local request at call time -- see `get_adapter` and
+        `url_for` -- so concurrent requests on different virtual hosts or
+        schemes cannot clobber each other.
         """
-        logger.debug(
-            "DefaultRouter.initialize: context=%r request=%r" % (context, request)
-        )
-
-        self.environ = request.environ
-        self.http_host = urlsplit(request.get("ACTUAL_URL", "")).netloc
-        self.url = request.getURL()
-
         if self.is_initialized:
             return
 
@@ -97,38 +96,65 @@ class Router(object):
         return self.url_map.add(self.rule_class(rule, endpoint=endpoint, **options))
 
     def get_adapter(self, **options):
-        """ return a new werkzeug map adapter
+        """Return a werkzeug MapAdapter bound to the *current* request's
+        host and scheme.
+
+        Host and scheme are read from the thread-local request on every
+        call rather than cached on the (shared, singleton) router, so
+        concurrent requests on different virtual hosts or schemes cannot
+        clobber each other's URL generation.
 
         default options:
-        (script_name=None, subdomain=None, url_scheme='http', default_method='GET', path_info=None, query_args=None)
-        see: http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.Map.bind
+        (script_name=None, subdomain=None, url_scheme='http',
+         default_method='GET', path_info=None, query_args=None)
+        see: https://werkzeug.palletsprojects.com/routing/#werkzeug.routing.Map.bind
         """
-        adapter = self.url_map.bind(self.http_host, **options)
-        return adapter
+        request = getRequest()
+        actual_url = request.get("ACTUAL_URL", "") if request else ""
+        parts = urlsplit(actual_url)
+        # Preserve the request scheme so force_external URLs are https
+        # behind TLS instead of always http. Callers may still override.
+        options.setdefault("url_scheme", parts.scheme or "http")
+        return self.url_map.bind(parts.netloc, **options)
 
-    def match(self, context, request, path):
-        """Werkzeug URL matcher.
+    def resolve(self, request, path):
+        """Resolve the path+method to an (endpoint, values) pair.
 
-        Werkzeug raises `NotFound` when no rule matches and
-        `MethodNotAllowed` when the path matches but the method
-        doesn't. Both used to propagate out of `handle_errors` as
-        HTTP 500 with an unhelpful body; convert them to proper
-        typed API errors (404 / 405) so the client sees the right
-        status.
+        Returns None when no rule matches the path (so the caller can
+        try the next router). Raises MethodNotAllowedError when the path
+        matches but the HTTP method does not, so the client gets a 405
+        rather than a misleading 404.
         """
         method = request.environ.get("REQUEST_METHOD", "GET")
-        logger.debug("router.match: method=%s" % method)
+        logger.debug("router.resolve: method=%s path=%s", method, path)
         adapter = self.get_adapter(path_info=path)
         try:
-            endpoint, values = adapter.match(method=method)
+            return adapter.match(method=method)
         except WzNotFound:
-            raise NotFoundError("No route matches {}".format(path))
+            return None
         except WzMethodNotAllowed as exc:
             allowed = ", ".join(sorted(exc.valid_methods or []))
             raise MethodNotAllowedError(
                 "Method {} not allowed on {}. Allowed: {}".format(
                     method, path, allowed or "(none)"))
-        return endpoint, values
+
+    def execute(self, context, request, endpoint, values):
+        """Call the view function registered for the given endpoint."""
+        return self.view_functions[endpoint](context, request, **values)
+
+    def match(self, context, request, path):
+        """Backward-compatible matcher.
+
+        Returns (endpoint, values) or raises NotFoundError when no rule
+        matches / MethodNotAllowedError when the method is wrong. New
+        callers should prefer `resolve`, which returns None on no-match
+        instead of raising, so a single werkzeug match serves both the
+        "does this router handle it?" question and the dispatch.
+        """
+        resolved = self.resolve(request, path)
+        if resolved is None:
+            raise NotFoundError("No route matches {}".format(path))
+        return resolved
 
     def url_for(self, endpoint, **options):
         """ get the url for the endpoint
@@ -141,7 +167,7 @@ class Router(object):
         # XXX: this is all a little bit hacky, especially when it comes to virtual hosting.
 
         request = getRequest()
-        spp = request.physicalPathFromURL(self.url)
+        spp = request.physicalPathFromURL(request.getURL())
 
         # find the API view root
         path = []
@@ -159,10 +185,10 @@ class Router(object):
     def __call__(self, context, request, path):
         """ calls the matching view function for the given path
         """
-        logger.debug("router.__call__: path=%s" % path)
+        logger.debug("router.__call__: path=%s", path)
 
         endpoint, values = self.match(context, request, path)
-        return self.view_functions[endpoint](context, request, **values)
+        return self.execute(context, request, endpoint, values)
 
 
 DefaultRouter = Router()
