@@ -17,7 +17,7 @@ from zope.publisher.interfaces import IPublishTraverse
 import logging
 
 
-__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__author__ = "Ramon Bartl <rb@ridingbytes.com>"
 __docformat__ = "plaintext"
 
 
@@ -93,9 +93,11 @@ class API(BrowserView):
         """ render json on __call__
         """
         accept = self.request.getHeader("Accept")
-        if self.request.form.get("asbinary", False) or accept == "application/zip":
+        if (self.request.form.get("asbinary", False)
+                or accept == "application/zip"):
             return self.to_binary_stream()
-        if self.request.form.get("asxml", False) or accept == "application/xml":
+        if (self.request.form.get("asxml", False)
+                or accept == "application/xml"):
             return self.to_xml()
         # return JSON per default
         return self.to_json()

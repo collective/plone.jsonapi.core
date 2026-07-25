@@ -1,10 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# Convenience imports
-from .browser.interfaces import IRouteProvider
-from .browser.interfaces import IRouter
-
-
-# Make Pyflakes happy
-IRouter
-IRouteProvider
+# Convenience re-exports of the browser-level interfaces.
+from .browser.interfaces import IRouteProvider  # noqa: F401
+from .browser.interfaces import IRouter  # noqa: F401

@@ -1,5 +1,5 @@
-global-include .py .zcml .txt .rst
+global-include *.py *.zcml *.txt *.rst
 recursive-include src *
 recursive-include docs *
-global-exclude *pyc
+global-exclude *.pyc
 exclude MANIFEST.in

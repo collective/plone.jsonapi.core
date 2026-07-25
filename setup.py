@@ -6,7 +6,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = "0.7.0"
+version = "0.8.0"
 
 long_description = (
     open("README.rst").read()
@@ -21,10 +21,8 @@ long_description = (
 setup(
     name="plone.jsonapi.core",
     version=version,
-    description="Plone JSON API",
+    description="An extensible Plone JSON API Framework",
     long_description=long_description,
-    # Get more strings from
-    # http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
         "Environment :: Web Environment",
         "Framework :: Plone",
@@ -35,7 +33,7 @@ setup(
         "Operating System :: OS Independent",
         "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
     ],
-    keywords="",
+    keywords="plone jsonapi rest api json werkzeug",
     author="Ramon Bartl",
     author_email="rb@ridingbytes.com",
     url="https://github.com/collective/plone.jsonapi.core",
@@ -47,13 +45,13 @@ setup(
     zip_safe=False,
     install_requires=[
         "setuptools",
+        "six",
         "werkzeug",
-        "dicttoxml"
-        # -*- Extra requirements: -*-
+        "dicttoxml",
+        "simplejson",
     ],
-    extras_require={"test": ["plone.app.testing", "unittest2", ]},
+    extras_require={"test": ["plone.app.testing", "unittest2"]},
     entry_points="""
-      # -*- Entry points: -*-
       [z3c.autoinclude.plugin]
       target = plone
       """,
