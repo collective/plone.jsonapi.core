@@ -14,7 +14,7 @@ from zope.globalrequest import getRequest
 import logging
 
 
-__author__ = "Ramon Bartl <ramon.bartl@googlemail.com>"
+__author__ = "Ramon Bartl <rb@ridingbytes.com>"
 __docformat__ = "plaintext"
 
 logger = logging.getLogger("plone.jsonapi.core.router")
@@ -48,7 +48,8 @@ class Router(object):
         logger.debug("DefaultRouter::initialize")
         for name, provider in component.getUtilitiesFor(IRouteProvider):
             logger.debug(
-                "DefaultRouter::initialize: name=%s, provider=%r", name, provider
+                "DefaultRouter::initialize: name=%s, provider=%r",
+                name, provider,
             )
 
             if getattr(provider, "initialize", None):
@@ -93,7 +94,8 @@ class Router(object):
             # http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.Rule
             return self.url_map.add(self.rule_class(rule, endpoint=endpoint))
 
-        return self.url_map.add(self.rule_class(rule, endpoint=endpoint, **options))
+        return self.url_map.add(
+            self.rule_class(rule, endpoint=endpoint, **options))
 
     def get_adapter(self, **options):
         """Return a werkzeug MapAdapter bound to the *current* request's
@@ -107,7 +109,7 @@ class Router(object):
         default options:
         (script_name=None, subdomain=None, url_scheme='http',
          default_method='GET', path_info=None, query_args=None)
-        see: https://werkzeug.palletsprojects.com/routing/#werkzeug.routing.Map.bind
+        see the werkzeug Map.bind documentation.
         """
         request = getRequest()
         actual_url = request.get("ACTUAL_URL", "") if request else ""
@@ -161,10 +163,11 @@ class Router(object):
 
         default options:
         (values=None, method=None, force_external=False, append_unknown=True)
-        see: http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.build
+        see the werkzeug MapAdapter.build documentation.
         """
 
-        # XXX: this is all a little bit hacky, especially when it comes to virtual hosting.
+        # XXX: this is all a little bit hacky, especially when it comes
+        # to virtual hosting.
 
         request = getRequest()
         spp = request.physicalPathFromURL(request.getURL())
@@ -216,7 +219,8 @@ def add_route(rule, endpoint=None, **kw):
     """
 
     def wrapper(f):
-        DefaultRouter.add_url_rule(rule, endpoint=endpoint, view_func=f, options=kw)
+        DefaultRouter.add_url_rule(
+            rule, endpoint=endpoint, view_func=f, options=kw)
         return f
 
     return wrapper

@@ -5,6 +5,7 @@ Changelog
 0.8.0 (unreleased)
 ------------------
 
+- #35 Pre-0.8.0 cleanup: remove obsolete JSONP helper, fix logger name, trim /version, add flake8 config
 - #33 Make the router thread-safe and dispatch with a single match
 - #34 Let the API receive PUT/PATCH/DELETE (WebDAV verb bypass)
 - #32 Add opt-in CORS support

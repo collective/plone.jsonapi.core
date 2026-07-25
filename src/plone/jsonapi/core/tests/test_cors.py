@@ -63,11 +63,13 @@ class TestAddCorsHeaders(unittest.TestCase):
     def test_default_methods_and_headers(self):
         req = FakeRequest()
         add_cors_headers(req, origin="*")
-        self.assertIn("GET", req.response.headers["Access-Control-Allow-Methods"])
-        self.assertIn("POST", req.response.headers["Access-Control-Allow-Methods"])
-        self.assertIn("OPTIONS", req.response.headers["Access-Control-Allow-Methods"])
-        self.assertIn("Authorization", req.response.headers["Access-Control-Allow-Headers"])
-        self.assertIn("Content-Type", req.response.headers["Access-Control-Allow-Headers"])
+        methods = req.response.headers["Access-Control-Allow-Methods"]
+        headers = req.response.headers["Access-Control-Allow-Headers"]
+        self.assertIn("GET", methods)
+        self.assertIn("POST", methods)
+        self.assertIn("OPTIONS", methods)
+        self.assertIn("Authorization", headers)
+        self.assertIn("Content-Type", headers)
 
     def test_custom_methods_and_headers(self):
         req = FakeRequest()
