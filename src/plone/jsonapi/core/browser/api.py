@@ -5,7 +5,7 @@ from .decorators import returns_binary_stream
 from .decorators import returns_json
 from .decorators import returns_xml
 from .decorators import runtime
-from .exceptions import APIError
+from .exceptions import MethodNotAllowedError
 from .exceptions import NotFoundError
 from .interfaces import IAPI
 from .interfaces import IRouter
@@ -43,32 +43,36 @@ class API(BrowserView):
     def dispatch(self):
         """Dispatch the given subpath to the first matching router.
 
-        Router.match raises NotFoundError / MethodNotAllowedError when
-        the path or method does not resolve; earlier versions returned
-        None silently, which surfaced as an empty 200 response. Try
-        each registered router in turn; the first successful match
-        wins. Only the last router's error is reraised, so ordering
-        matters when multiple routers are registered.
+        Each router is asked to `resolve` the path with a single werkzeug
+        match: it returns an (endpoint, values) pair when it handles the
+        path, or None so the next router gets a turn. A resolved router
+        executes the view immediately -- no second match. A
+        MethodNotAllowedError (path matches, method doesn't) is deferred:
+        another router might still fully handle the request, so it is
+        only raised once every router has been tried. NotFoundError is
+        raised when no router matched at all.
         """
         path = "/".join(self.traverse_subpath)
         logger.debug("Dispatching path: '%s'", path)
 
-        last_error = None
+        method_not_allowed = None
         for name, router in component.getUtilitiesFor(IRouter):
             router.initialize(self.context, self.request)
             try:
-                match = router.match(self.context, self.request, path)
-            except APIError as exc:
-                last_error = exc
+                resolved = router.resolve(self.request, path)
+            except MethodNotAllowedError as exc:
+                # Remember it, but let another router try to serve the
+                # method before giving up with a 405.
+                method_not_allowed = exc
                 continue
-            if match:
-                logger.debug("Router '%r' will handle the request", router)
-                return router(self.context, self.request, path)
+            if resolved is None:
+                continue
+            logger.debug("Router '%r' will handle the request", router)
+            endpoint, values = resolved
+            return router.execute(self.context, self.request, endpoint, values)
 
-        # No router matched: reraise the most-recent match failure, or
-        # a bare NotFoundError if none of the routers even threw.
-        if last_error is not None:
-            raise last_error
+        if method_not_allowed is not None:
+            raise method_not_allowed
         raise NotFoundError("No route matches {}".format(path))
 
     @returns_json

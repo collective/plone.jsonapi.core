@@ -5,6 +5,7 @@ Changelog
 0.8.0 (unreleased)
 ------------------
 
+- #33 Make the router thread-safe and dispatch with a single match
 - #32 Add opt-in CORS support
 - #31 Convert Router match failures and no-router-matched to typed 404/405
 - #30 Swappable error handler with clean envelope and status flow
