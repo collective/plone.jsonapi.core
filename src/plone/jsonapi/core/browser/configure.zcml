@@ -25,4 +25,10 @@
         provides=".interfaces.IErrorHandler"
         component=".decorators.default_error_handler" />
 
+    <!-- Clear maybe_webdav_client for API requests so PUT/PATCH/DELETE
+         reach the API view instead of Zope's WebDAV machinery. -->
+    <subscriber
+        for="ZPublisher.interfaces.IPubStart"
+        handler=".webdav.allow_api_verbs" />
+
 </configure>
