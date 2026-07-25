@@ -1,0 +1,23 @@
+version: 2
+
+# plone.jsonapi.core still targets Python 2.7 (Plone 5.2). Ignore the
+# dependency releases that dropped Python 2.7 support so Dependabot
+# stops proposing bumps that cannot be installed here:
+#   - setuptools >= 45      (45.0.0 dropped py2.7)
+#   - wheel >= 0.38         (0.38.0 dropped py2.7)
+#   - werkzeug >= 2.0       (2.0 dropped py2.7)
+#   - dicttoxml > 1.7.4     (no py2.7-compatible release beyond 1.7.4)
+updates:
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    ignore:
+      - dependency-name: "setuptools"
+        versions: [">=45"]
+      - dependency-name: "wheel"
+        versions: [">=0.38"]
+      - dependency-name: "werkzeug"
+        versions: [">=2.0"]
+      - dependency-name: "dicttoxml"
+        versions: [">1.7.4"]
