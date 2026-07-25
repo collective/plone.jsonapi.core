@@ -13,6 +13,9 @@ from plone.jsonapi.core.browser.decorators import default_error_handler
 from plone.jsonapi.core.browser.decorators import handle_errors
 from plone.jsonapi.core.browser.exceptions import APIError
 from plone.jsonapi.core.browser.exceptions import NotFoundError
+from plone.jsonapi.core.browser.interfaces import IErrorHandler
+from zope.component import getGlobalSiteManager
+from zope.component import provideUtility
 
 
 class FakeResponse(object):
@@ -111,9 +114,59 @@ class TestHandleErrorsDecorator(unittest.TestCase):
         self.assertEqual(view.request.response.status, 500)
 
 
+class TestErrorHandlerIsSwappable(unittest.TestCase):
+    """handle_errors must use a consumer-registered IErrorHandler utility
+    instead of the default, without any monkey-patching."""
+
+    def tearDown(self):
+        # Remove any IErrorHandler registered by a test so the default
+        # (None -> default_error_handler) is restored for other tests.
+        getGlobalSiteManager().unregisterUtility(provided=IErrorHandler)
+
+    def _fake_view(self):
+        class View(object):
+            request = FakeRequest()
+        return View()
+
+    def test_registered_utility_overrides_the_default(self):
+        calls = []
+
+        def custom_handler(exc, request):
+            calls.append((exc, request))
+            return {"handled_by": "custom", "message": str(exc)}
+
+        provideUtility(custom_handler, IErrorHandler)
+
+        view = self._fake_view()
+
+        @handle_errors
+        def raiser(self):
+            raise NotFoundError("gone")
+
+        result = raiser(view)
+        self.assertEqual(result, {"handled_by": "custom", "message": "gone"})
+        self.assertEqual(len(calls), 1)
+        # The exception and the view's request are passed through.
+        self.assertIsInstance(calls[0][0], NotFoundError)
+        self.assertIs(calls[0][1], view.request)
+
+    def test_falls_back_to_default_when_no_utility(self):
+        # With nothing registered, the built-in envelope is produced.
+        view = self._fake_view()
+
+        @handle_errors
+        def raiser(self):
+            raise NotFoundError("gone")
+
+        result = raiser(view)
+        self.assertEqual(result["type"], "NotFoundError")
+        self.assertFalse(result["success"])
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(TestDefaultErrorHandler))
     suite.addTest(makeSuite(TestHandleErrorsDecorator))
+    suite.addTest(makeSuite(TestErrorHandlerIsSwappable))
     return suite

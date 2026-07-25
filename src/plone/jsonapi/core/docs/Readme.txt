@@ -68,6 +68,48 @@ Check what happenss when a route throws an Error::
     >>> json.loads(browser.contents).get("message")
     'This failed badly'
 
+The error envelope also carries the exception class name in `type`::
+
+    >>> json.loads(browser.contents).get("type")
+    'RuntimeError'
+
+
+Testing the framework -- PUT, PATCH and DELETE routes::
+
+    >>> @router.add_route("/verb", "verb",
+    ...                   methods=["PUT", "PATCH", "DELETE"])
+    ... def verb(context, request):
+    ...     return {"method": request.get("REQUEST_METHOD")}
+
+    >>> resp = browser.testapp.put(api_url + "/verb", expect_errors=True)
+    >>> resp.status_int
+    200
+    >>> json.loads(resp.body).get("method")
+    'PUT'
+
+    >>> resp = browser.testapp.patch(api_url + "/verb", expect_errors=True)
+    >>> json.loads(resp.body).get("method")
+    'PATCH'
+
+    >>> resp = browser.testapp.delete(api_url + "/verb", expect_errors=True)
+    >>> json.loads(resp.body).get("method")
+    'DELETE'
+
+
+An unknown route returns a 404::
+
+    >>> resp = browser.testapp.get(api_url + "/no/such/route",
+    ...                            expect_errors=True)
+    >>> resp.status_int
+    404
+
+
+A wrong method on a known route returns a 405::
+
+    >>> resp = browser.testapp.post(api_url + "/verb", "", expect_errors=True)
+    >>> resp.status_int
+    405
+
 
 Test XML::
 
