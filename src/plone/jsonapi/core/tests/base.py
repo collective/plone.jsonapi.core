@@ -9,8 +9,8 @@ from plone.testing import z2
 from plone.testing.z2 import Browser
 from zope.configuration import xmlconfig
 
+import json
 import os
-import simplejson as json
 import unittest2 as unittest
 
 

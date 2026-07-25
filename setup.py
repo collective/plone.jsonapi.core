@@ -46,9 +46,10 @@ setup(
     install_requires=[
         "setuptools",
         "six",
-        "werkzeug",
-        "dicttoxml",
-        "simplejson",
+        # werkzeug 2.x and newer dicttoxml drop Python 2.7 support; cap
+        # to the last releases that still install on py2.7.
+        "werkzeug <2.0",
+        "dicttoxml <=1.7.4",
     ],
     extras_require={"test": ["plone.app.testing", "unittest2"]},
     entry_points="""

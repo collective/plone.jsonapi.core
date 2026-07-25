@@ -5,7 +5,8 @@ Changelog
 0.8.0 (unreleased)
 ------------------
 
-- #35 Pre-0.8.0 cleanup: remove obsolete JSONP helper, fix logger name, trim /version, declare simplejson/six deps, refresh README, bump packaging pins, drop Travis, add flake8 config
+- #38 Drop simplejson (use stdlib json); pin werkzeug/dicttoxml to last py2.7 releases
+- #35 Pre-0.8.0 cleanup: remove obsolete JSONP helper, fix logger name, trim /version, declare six dep, refresh README, bump packaging pins, drop Travis, add flake8 config
 - #33 Make the router thread-safe and dispatch with a single match
 - #34 Let the API receive PUT/PATCH/DELETE (WebDAV verb bypass)
 - #32 Add opt-in CORS support

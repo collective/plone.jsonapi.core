@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import json
 import logging
 import os
 import time
 
 import dicttoxml
-import simplejson as json
 from ZPublisher.Iterators import filestream_iterator
 from zope.component import queryUtility
 
