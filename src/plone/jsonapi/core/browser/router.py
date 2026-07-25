@@ -1,7 +1,11 @@
 # -*- coding: utf-8 -*-
 
+from .exceptions import MethodNotAllowedError
+from .exceptions import NotFoundError
 from .interfaces import IRouteProvider
 from six.moves.urllib.parse import urlsplit
+from werkzeug.exceptions import MethodNotAllowed as WzMethodNotAllowed
+from werkzeug.exceptions import NotFound as WzNotFound
 from werkzeug.routing import Map
 from werkzeug.routing import Rule
 from zope import component
@@ -103,16 +107,27 @@ class Router(object):
         return adapter
 
     def match(self, context, request, path):
-        """ url matcher
+        """Werkzeug URL matcher.
 
-        default options:
-        (path_info=None, method=None, return_rule=False, query_args=None)
-        see: http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.MapAdapter.match
+        Werkzeug raises `NotFound` when no rule matches and
+        `MethodNotAllowed` when the path matches but the method
+        doesn't. Both used to propagate out of `handle_errors` as
+        HTTP 500 with an unhelpful body; convert them to proper
+        typed API errors (404 / 405) so the client sees the right
+        status.
         """
         method = request.environ.get("REQUEST_METHOD", "GET")
         logger.debug("router.match: method=%s" % method)
         adapter = self.get_adapter(path_info=path)
-        endpoint, values = adapter.match(method=method)
+        try:
+            endpoint, values = adapter.match(method=method)
+        except WzNotFound:
+            raise NotFoundError("No route matches {}".format(path))
+        except WzMethodNotAllowed as exc:
+            allowed = ", ".join(sorted(exc.valid_methods or []))
+            raise MethodNotAllowedError(
+                "Method {} not allowed on {}. Allowed: {}".format(
+                    method, path, allowed or "(none)"))
         return endpoint, values
 
     def url_for(self, endpoint, **options):

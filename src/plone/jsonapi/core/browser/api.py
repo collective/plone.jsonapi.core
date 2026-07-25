@@ -5,6 +5,8 @@ from .decorators import returns_binary_stream
 from .decorators import returns_json
 from .decorators import returns_xml
 from .decorators import runtime
+from .exceptions import APIError
+from .exceptions import NotFoundError
 from .interfaces import IAPI
 from .interfaces import IRouter
 from Products.Five import BrowserView
@@ -39,16 +41,35 @@ class API(BrowserView):
         return self
 
     def dispatch(self):
-        """ dispatches the given subpath to the router
+        """Dispatch the given subpath to the first matching router.
+
+        Router.match raises NotFoundError / MethodNotAllowedError when
+        the path or method does not resolve; earlier versions returned
+        None silently, which surfaced as an empty 200 response. Try
+        each registered router in turn; the first successful match
+        wins. Only the last router's error is reraised, so ordering
+        matters when multiple routers are registered.
         """
         path = "/".join(self.traverse_subpath)
         logger.debug("Dispatching path: '%s'", path)
+
+        last_error = None
         for name, router in component.getUtilitiesFor(IRouter):
             router.initialize(self.context, self.request)
-            # The first router which is able to match the route wins.
-            if router.match(self.context, self.request, path):
+            try:
+                match = router.match(self.context, self.request, path)
+            except APIError as exc:
+                last_error = exc
+                continue
+            if match:
                 logger.debug("Router '%r' will handle the request", router)
                 return router(self.context, self.request, path)
+
+        # No router matched: reraise the most-recent match failure, or
+        # a bare NotFoundError if none of the routers even threw.
+        if last_error is not None:
+            raise last_error
+        raise NotFoundError("No route matches {}".format(path))
 
     @returns_json
     @runtime
