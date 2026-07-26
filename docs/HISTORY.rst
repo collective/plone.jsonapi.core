@@ -2,7 +2,7 @@ Changelog
 =========
 
 
-0.8.0 (unreleased)
+0.8.0 (2026-07-26)
 ------------------
 
 - #46 Add declarative route permissions
