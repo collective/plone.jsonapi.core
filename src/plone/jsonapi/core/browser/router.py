@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from .exceptions import ForbiddenError
 from .exceptions import MethodNotAllowedError
 from .exceptions import NotFoundError
+from .exceptions import UnauthorizedError
 from .interfaces import IRouteProvider
+from AccessControl import getSecurityManager
+from Products.CMFCore.utils import getToolByName
 from six.moves.urllib.parse import urlsplit
 from werkzeug.exceptions import MethodNotAllowed as WzMethodNotAllowed
 from werkzeug.exceptions import NotFound as WzNotFound
@@ -28,6 +32,7 @@ class Router(object):
         logger.debug("DefaultRouter::__init__")
         self.rule_class = Rule
         self.view_functions = {}
+        self.route_permissions = {}
         self.url_map = Map()
         self.is_initialized = False
 
@@ -78,6 +83,13 @@ class Router(object):
         if endpoint is None:
             endpoint = view_func.__name__
 
+        # Extract framework-level options before handing the rest to the
+        # werkzeug Rule, which rejects unknown keywords. `permission` is a
+        # declared Zope permission enforced by `check_permission` at
+        # dispatch; see the declarative-route-permissions proposal.
+        options = dict(options or {})
+        permission = options.pop("permission", None)
+
         old_func = self.view_functions.get(endpoint)
 
         # Avoid route overwriting
@@ -87,13 +99,11 @@ class Router(object):
                 "existing endpoint function: %s" % endpoint
             )
 
-        # Store the view function below the endpoint
+        # Store the view function and its permission below the endpoint
         self.view_functions[endpoint] = view_func
+        self.route_permissions[endpoint] = permission
 
-        if options is None:
-            # http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.Rule
-            return self.url_map.add(self.rule_class(rule, endpoint=endpoint))
-
+        # http://werkzeug.pocoo.org/docs/routing/#werkzeug.routing.Rule
         return self.url_map.add(
             self.rule_class(rule, endpoint=endpoint, **options))
 
@@ -140,8 +150,48 @@ class Router(object):
                 "Method {} not allowed on {}. Allowed: {}".format(
                     method, path, allowed or "(none)"))
 
+    def check_permission(self, context, endpoint):
+        """Enforce the endpoint's declared permission, if any.
+
+        A route may declare a Zope permission via the `permission`
+        option. When set, the router verifies it on the dispatch context
+        before the endpoint runs:
+
+        - no declared permission -> call the endpoint unchecked (the
+          historical behavior; fully backward compatible);
+        - declared and granted -> call the endpoint;
+        - declared and denied, caller anonymous -> `UnauthorizedError`
+          (401, prompting authentication);
+        - declared and denied, caller authenticated -> `ForbiddenError`
+          (403).
+
+        See the declarative-route-permissions proposal for the rationale.
+        """
+        permission = self.route_permissions.get(endpoint)
+        if permission is None:
+            return
+        if getSecurityManager().checkPermission(permission, context):
+            return
+        if self.is_anonymous(context):
+            raise UnauthorizedError(
+                "Authentication required for '{}'".format(endpoint))
+        raise ForbiddenError(
+            "You do not have the '{}' permission required for "
+            "'{}'".format(permission, endpoint))
+
+    @staticmethod
+    def is_anonymous(context):
+        """True if the current caller is not authenticated."""
+        mtool = getToolByName(context, "portal_membership")
+        return mtool.isAnonymousUser()
+
     def execute(self, context, request, endpoint, values):
-        """Call the view function registered for the given endpoint."""
+        """Call the view function registered for the given endpoint.
+
+        Enforces the endpoint's declared permission (if any) before the
+        view function runs.
+        """
+        self.check_permission(context, endpoint)
         return self.view_functions[endpoint](context, request, **values)
 
     def match(self, context, request, path):

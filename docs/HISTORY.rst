@@ -5,6 +5,7 @@ Changelog
 0.8.0 (unreleased)
 ------------------
 
+- #46 Add declarative route permissions
 - #44 Convert README to Markdown and document the thin-layer / permissions model
 - #40 Strengthen tests and handle errors in XML responses
 - #38 Drop simplejson (use stdlib json); pin werkzeug/dicttoxml to last py2.7 releases
