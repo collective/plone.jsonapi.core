@@ -9,10 +9,7 @@ from setuptools import setup
 version = "0.8.0"
 
 long_description = (
-    open("README.rst").read()
-    + "\n"
-    + open(os.path.join(
-        "src", "plone", "jsonapi", "core", "docs", "Readme.txt")).read()
+    open("README.md").read()
     + "\n"
     + open(os.path.join("docs", "HISTORY.rst")).read()
     + "\n"
@@ -23,6 +20,7 @@ setup(
     version=version,
     description="An extensible Plone JSON API Framework",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     classifiers=[
         "Environment :: Web Environment",
         "Framework :: Plone",

@@ -5,6 +5,7 @@ Changelog
 0.8.0 (unreleased)
 ------------------
 
+- #44 Convert README to Markdown and document the thin-layer / permissions model
 - #40 Strengthen tests and handle errors in XML responses
 - #38 Drop simplejson (use stdlib json); pin werkzeug/dicttoxml to last py2.7 releases
 - #35 Pre-0.8.0 cleanup: remove obsolete JSONP helper, fix logger name, trim /version, declare six dep, refresh README, bump packaging pins, drop Travis, add flake8 config
