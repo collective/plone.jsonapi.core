@@ -6,7 +6,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 
-version = "0.8.0"
+version = "0.8.1"
 
 long_description = (
     open("README.md").read()
