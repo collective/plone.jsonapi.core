@@ -42,8 +42,8 @@ Testing the framework -- lets add a new GET route::
     ...     return dict(hello=name)
 
     >>> browser.open(api_url + "/hello/world")
-    >>> json.loads(browser.contents).get("hello")
-    'world'
+    >>> print(json.loads(browser.contents).get("hello"))
+    world
 
 
 Testing the framework -- lets add a new POST route::
@@ -53,25 +53,28 @@ Testing the framework -- lets add a new POST route::
     ...     return {"hello": "post"}
 
     >>> browser.post(api_url + "/hello", "")
-    >>> json.loads(browser.contents).get("hello")
-    'post'
+    >>> print(json.loads(browser.contents).get("hello"))
+    post
 
 
-Check what happenss when a route throws an Error::
+Check what happens when a route throws an error. The error handler
+turns it into a JSON envelope with the matching HTTP status (500 for a
+bare exception) instead of leaking a traceback::
 
     >>> @router.add_route("/fail", "fail", methods=["GET"])
     ... def fail(context, request):
     ...     raise RuntimeError("This failed badly")
 
-    >>> browser.open(api_url + "/fail")
-    Traceback ...
-    >>> json.loads(browser.contents).get("message")
-    'This failed badly'
+    >>> resp = browser.testapp.get(api_url + "/fail", expect_errors=True)
+    >>> resp.status_int
+    500
+    >>> print(json.loads(resp.body).get("message"))
+    This failed badly
 
-The error envelope also carries the exception class name in `type`::
+The envelope also carries the exception class name in `type`::
 
-    >>> json.loads(browser.contents).get("type")
-    'RuntimeError'
+    >>> print(json.loads(resp.body).get("type"))
+    RuntimeError
 
 
 Testing the framework -- PUT, PATCH and DELETE routes::
@@ -84,16 +87,16 @@ Testing the framework -- PUT, PATCH and DELETE routes::
     >>> resp = browser.testapp.put(api_url + "/verb", expect_errors=True)
     >>> resp.status_int
     200
-    >>> json.loads(resp.body).get("method")
-    'PUT'
+    >>> print(json.loads(resp.body).get("method"))
+    PUT
 
     >>> resp = browser.testapp.patch(api_url + "/verb", expect_errors=True)
-    >>> json.loads(resp.body).get("method")
-    'PATCH'
+    >>> print(json.loads(resp.body).get("method"))
+    PATCH
 
     >>> resp = browser.testapp.delete(api_url + "/verb", expect_errors=True)
-    >>> json.loads(resp.body).get("method")
-    'DELETE'
+    >>> print(json.loads(resp.body).get("method"))
+    DELETE
 
 
 An unknown route returns a 404::
@@ -117,8 +120,8 @@ Test XML::
     ... def xml(context, request):
     ...     return {"type": "xml"}
     >>> browser.open(api_url + "/xml?asxml=1")
-    >>> browser.contents
-    b'<?xml version="1.0" encoding="UTF-8" ?><root><type type="str">xml</type></root>'
+    >>> print(browser.contents.decode("utf-8"))
+    <?xml version="1.0" encoding="UTF-8" ?><root><type type="str">xml</type></root>
 
 
 Test Binary Stream::
@@ -127,5 +130,5 @@ Test Binary Stream::
     ... def data(context, request):
     ...     return self.get_testfile_path()
     >>> browser.open(api_url + "/data?asbinary=1")
-    >>> browser.contents
-    b'%PDF-...'
+    >>> browser.contents[:5] == b"%PDF-"
+    True
