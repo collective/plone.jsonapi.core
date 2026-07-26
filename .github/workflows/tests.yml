@@ -1,0 +1,58 @@
+name: tests
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+
+jobs:
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install flake8
+        run: python -m pip install flake8
+      - name: Lint
+        run: flake8 src/plone/jsonapi/core setup.py
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Python 2.7 needs a container: GitHub runners no longer ship
+          # it. The 2.7 image is Debian buster (old glibc), so the
+          # container steps pin to action versions that still run there.
+          - python: "2.7"
+            image: "python:2.7-buster"
+          - python: "3.8"
+            image: "python:3.8-bullseye"
+    container: ${{ matrix.image }}
+    steps:
+      - name: Checkout
+        # v3 (node16) runs on the older glibc of the py2.7 image; v4
+        # (node20) does not.
+        uses: actions/checkout@v3
+
+      - name: Cache eggs
+        uses: actions/cache@v3
+        with:
+          path: eggs
+          key: eggs-${{ matrix.python }}-${{ hashFiles('requirements.txt', 'buildout.cfg') }}
+          restore-keys: |
+            eggs-${{ matrix.python }}-
+
+      - name: Install bootstrap toolchain
+        run: python -m pip install -r requirements.txt
+
+      - name: Buildout
+        run: buildout -N -c buildout.cfg
+
+      - name: Run tests
+        run: bin/test -v1

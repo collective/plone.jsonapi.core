@@ -50,6 +50,26 @@ INTEGRATION_TESTING = IntegrationTesting(
 class APITestCase(unittest.TestCase):
     layer = INTEGRATION_TESTING
 
+    def setUp(self):
+        super(APITestCase, self).setUp()
+        from zope.globalrequest import setRequest
+        # url_for derives the @@API mount from the *current* request
+        # (via zope.globalrequest). In this minimal layer nothing
+        # publishes an @@API request for the integration tests, so
+        # expose a request whose URL points at the @@API view and make
+        # it the global request. Full Plone wires this up automatically;
+        # here we do it explicitly so url_for can resolve.
+        request = self.layer["request"]
+        api_url = self.getPortal().absolute_url() + "/@@API"
+        request["URL"] = api_url
+        request["ACTUAL_URL"] = api_url
+        setRequest(request)
+
+    def tearDown(self):
+        from zope.globalrequest import clearRequest
+        clearRequest()
+        super(APITestCase, self).tearDown()
+
     def getBrowser(self, handleErrors=False):
         browser = Browser(self.getApp())
         if handleErrors:
