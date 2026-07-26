@@ -4,6 +4,7 @@ version: 2
 # dependency releases that dropped Python 2.7 support so Dependabot
 # stops proposing bumps that cannot be installed here:
 #   - setuptools >= 45      (45.0.0 dropped py2.7)
+#   - zc.buildout >= 3.0    (3.0.0 dropped py2.7)
 #   - wheel >= 0.38         (0.38.0 dropped py2.7)
 #   - werkzeug >= 2.0       (2.0 dropped py2.7)
 #   - dicttoxml > 1.7.4     (no py2.7-compatible release beyond 1.7.4)
@@ -15,6 +16,8 @@ updates:
     ignore:
       - dependency-name: "setuptools"
         versions: [">=45"]
+      - dependency-name: "zc.buildout"
+        versions: [">=3.0"]
       - dependency-name: "wheel"
         versions: [">=0.38"]
       - dependency-name: "werkzeug"
