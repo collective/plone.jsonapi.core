@@ -10,8 +10,11 @@ they use a fake request set via zope.globalrequest.
 import threading
 import unittest2 as unittest
 
+from plone.jsonapi.core.browser import router as router_module
+from plone.jsonapi.core.browser.exceptions import ForbiddenError
 from plone.jsonapi.core.browser.exceptions import MethodNotAllowedError
 from plone.jsonapi.core.browser.exceptions import NotFoundError
+from plone.jsonapi.core.browser.exceptions import UnauthorizedError
 from plone.jsonapi.core.browser.router import Router
 from zope.globalrequest import clearRequest
 from zope.globalrequest import setRequest
@@ -172,10 +175,97 @@ class TestMatchBackwardCompat(unittest.TestCase):
         self.assertEqual(result, {"id": "xyz"})
 
 
+class FakeSecurityManager(object):
+    """Grants or denies every permission check uniformly."""
+
+    def __init__(self, allowed):
+        self._allowed = allowed
+
+    def checkPermission(self, permission, context):
+        return self._allowed
+
+
+class FakeMembershipTool(object):
+    """Reports the caller as anonymous or authenticated."""
+
+    def __init__(self, anonymous):
+        self._anonymous = anonymous
+
+    def isAnonymousUser(self):
+        return self._anonymous
+
+
+class TestDeclarativePermissions(unittest.TestCase):
+    """A route may declare a `permission`; the router enforces it before
+    the endpoint runs. Routes without one keep the historical behavior.
+    """
+
+    def setUp(self):
+        # Save the module-level lookups the router uses for security, so
+        # we can stub them without a full Plone security context.
+        self._orig_sm = router_module.getSecurityManager
+        self._orig_gtbn = router_module.getToolByName
+
+    def tearDown(self):
+        router_module.getSecurityManager = self._orig_sm
+        router_module.getToolByName = self._orig_gtbn
+        clearRequest()
+
+    def patch_security(self, allowed, anonymous=False):
+        router_module.getSecurityManager = lambda: FakeSecurityManager(
+            allowed)
+        router_module.getToolByName = lambda context, name: FakeMembershipTool(
+            anonymous)
+
+    def make_guarded_router(self):
+        router = Router()
+        router.add_url_rule(
+            "/admin", endpoint="admin",
+            view_func=lambda context, request: {"ok": True},
+            options={"methods": ["GET"], "permission": "cmf.ManagePortal"})
+        return router
+
+    def test_permission_is_stored_not_passed_to_werkzeug(self):
+        # If `permission` leaked into the werkzeug Rule, add_url_rule
+        # would already have raised; reaching here proves it was popped.
+        router = self.make_guarded_router()
+        self.assertEqual(
+            router.route_permissions["admin"], "cmf.ManagePortal")
+
+    def test_route_without_permission_is_unchecked(self):
+        router = make_router()
+        # No security stubbing: an unguarded route must not touch the
+        # security machinery at all.
+        self.assertEqual(router.route_permissions["things"], None)
+        result = router.execute(None, FakeRequest(), "things", {})
+        self.assertEqual(result, {"ok": True})
+
+    def test_granted_permission_calls_endpoint(self):
+        router = self.make_guarded_router()
+        self.patch_security(allowed=True)
+        result = router.execute(object(), FakeRequest(), "admin", {})
+        self.assertEqual(result, {"ok": True})
+
+    def test_denied_authenticated_raises_forbidden(self):
+        router = self.make_guarded_router()
+        self.patch_security(allowed=False, anonymous=False)
+        self.assertRaises(
+            ForbiddenError,
+            router.execute, object(), FakeRequest(), "admin", {})
+
+    def test_denied_anonymous_raises_unauthorized(self):
+        router = self.make_guarded_router()
+        self.patch_security(allowed=False, anonymous=True)
+        self.assertRaises(
+            UnauthorizedError,
+            router.execute, object(), FakeRequest(), "admin", {})
+
+
 def test_suite():
     from unittest import TestSuite, makeSuite
     suite = TestSuite()
     suite.addTest(makeSuite(TestAdapterIsRequestDerived))
     suite.addTest(makeSuite(TestResolve))
     suite.addTest(makeSuite(TestMatchBackwardCompat))
+    suite.addTest(makeSuite(TestDeclarativePermissions))
     return suite

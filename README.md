@@ -290,3 +290,28 @@ turned into a JSON error envelope with the matching HTTP status:
     "type": "Unauthorized"
 }
 ```
+
+### Declarative permissions
+
+Since 0.8.0 a route can declare its permission instead of checking it by
+hand. Pass `permission` when registering the route and the router
+enforces it on the dispatch context before the endpoint runs: anonymous
+callers get a 401, authenticated-but-unauthorized callers a 403, both as
+the usual JSON error envelope. Routes without a `permission` behave
+exactly as before (no check), so this is fully opt-in:
+
+```python
+from plone.jsonapi.core import router
+
+
+@router.add_route("/hello/<string:name>", "hello", methods=["GET"],
+                  permission="ViewHelloAPI")
+def hello(context, request, name="world"):
+    return {"hello": name}
+```
+
+The same key works in the `IRouteProvider` tuple form via the options
+dict, e.g. `dict(methods=["GET"], permission="ViewHelloAPI")`. Prefer
+this over the manual check above for route-level gating; object-level
+checks (against something resolved inside the endpoint) stay the
+endpoint's responsibility.

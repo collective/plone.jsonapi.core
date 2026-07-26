@@ -1,8 +1,7 @@
 # Proposal: declarative route permissions
 
-- **Status:** draft
-- **Affects:** `plone.jsonapi.core.browser.router`,
-  `plone.jsonapi.core.browser.api`
+- **Status:** implemented in 0.8.0
+- **Affects:** `plone.jsonapi.core.browser.router`
 - **Backward compatible:** yes (opt-in; default behavior unchanged)
 
 
